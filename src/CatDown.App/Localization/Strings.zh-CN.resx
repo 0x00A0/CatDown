@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="OpenFolder" xml:space="preserve"><value>打开文件夹</value></data>
+  <data name="Settings" xml:space="preserve"><value>设置</value></data>
+  <data name="Export" xml:space="preserve"><value>导出</value></data>
+  <data name="ExportCurrent" xml:space="preserve"><value>导出当前文件</value></data>
+  <data name="ExportAll" xml:space="preserve"><value>导出整个项目</value></data>
+  <data name="Preview" xml:space="preserve"><value>预览</value></data>
+  <data name="BackToEditing" xml:space="preserve"><value>返回编辑</value></data>
+  <data name="OnlyNeedsReview" xml:space="preserve"><value>只看需复核</value></data>
+  <data name="InterfaceLanguage" xml:space="preserve"><value>界面语言</value></data>
+  <data name="Theme" xml:space="preserve"><value>主题</value></data>
+  <data name="FollowSystem" xml:space="preserve"><value>跟随系统</value></data>
+  <data name="ThemeLight" xml:space="preserve"><value>亮色</value></data>
+  <data name="ThemeDark" xml:space="preserve"><value>暗色</value></data>
+  <data name="Language_zh" xml:space="preserve"><value>中文</value></data>
+  <data name="Language_en" xml:space="preserve"><value>英文</value></data>
+  <data name="Language_sv" xml:space="preserve"><value>瑞典语</value></data>
+  <data name="NewProjectTitle" xml:space="preserve"><value>新项目</value></data>
+  <data name="NewProjectHint" xml:space="preserve"><value>第一次用 CatDown 打开这个文件夹，选一下翻译方向。</value></data>
+  <data name="SourceLanguage" xml:space="preserve"><value>源语言</value></data>
+  <data name="TargetLanguage" xml:space="preserve"><value>目标语言</value></data>
+  <data name="SameLanguage" xml:space="preserve"><value>源语言和目标语言不能一样。</value></data>
+  <data name="Ok" xml:space="preserve"><value>确定</value></data>
+  <data name="Cancel" xml:space="preserve"><value>取消</value></data>
+  <data name="Close" xml:space="preserve"><value>关闭</value></data>
+  <data name="NoProject" xml:space="preserve"><value>打开一个文件夹开始翻译</value></data>
+  <data name="NoFile" xml:space="preserve"><value>从左边选一个文件</value></data>
+  <data name="NoMarkdownFiles" xml:space="preserve"><value>这个文件夹里没有 Markdown 文件。</value></data>
+  <data name="ColumnSource" xml:space="preserve"><value>原文</value></data>
+  <data name="ColumnTarget" xml:space="preserve"><value>译文</value></data>
+  <data name="Status_Untranslated" xml:space="preserve"><value>未翻译</value></data>
+  <data name="Status_Draft" xml:space="preserve"><value>草稿</value></data>
+  <data name="Status_Confirmed" xml:space="preserve"><value>已确认</value></data>
+  <data name="Status_NeedsReview" xml:space="preserve"><value>需复核</value></data>
+  <data name="SourceChanged" xml:space="preserve"><value>原文有变化：{0} 句需复核，{1} 句新增，{2} 句删除。</value></data>
+  <data name="BrokenFile" xml:space="preserve"><value>这个文件的翻译数据坏了，已备份到 {0}，并重新切分。</value></data>
+  <data name="Merge" xml:space="preserve"><value>合并下一句</value></data>
+  <data name="Split" xml:space="preserve"><value>在原文光标处拆分</value></data>
+  <data name="CopySource" xml:space="preserve"><value>复制原文</value></data>
+  <data name="Confirm" xml:space="preserve"><value>确认</value></data>
+  <data name="EditSource" xml:space="preserve"><value>编辑原文</value></data>
+  <data name="SaveSource" xml:space="preserve"><value>保存原文</value></data>
+  <data name="CannotMergeLast" xml:space="preserve"><value>这是这一段的最后一句，没有下一句可以合并。</value></data>
+  <data name="CannotSplitEdge" xml:space="preserve"><value>拆分点两边都要有文字。先在原文里点一下要拆开的位置。</value></data>
+  <data name="CannotSplitMarkup" xml:space="preserve"><value>拆分点落在行内标记里面，换个位置。</value></data>
+  <data name="CannotSplitVerbatim" xml:space="preserve"><value>代码块、HTML 和 front matter 不能拆分。</value></data>
+  <data name="ChooseOutputFolder" xml:space="preserve"><value>选择导出文件夹</value></data>
+  <data name="OutputIsProjectRoot" xml:space="preserve"><value>导出文件夹不能是项目文件夹本身，会覆盖原文。</value></data>
+  <data name="ExportDone" xml:space="preserve"><value>导出了 {0} 个文件，{1} 句还没翻。</value></data>
+  <data name="ExportFailed" xml:space="preserve"><value>有 {0} 个文件没导出：</value></data>
+  <data name="ExportTitle" xml:space="preserve"><value>导出</value></data>
+  <data name="ErrorTitle" xml:space="preserve"><value>出错了</value></data>
+  <data name="Progress" xml:space="preserve"><value>{0}%</value></data>
+</root>

@@ -1,0 +1,26 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:CatDown.App.ViewModels"
+        xmlns:loc="using:CatDown.App.Localization"
+        x:Class="CatDown.App.Views.SettingsWindow"
+        x:DataType="vm:SettingsViewModel"
+        Title="{loc:Str Settings}"
+        Width="420" SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+  <StackPanel Margin="24" Spacing="16">
+    <StackPanel Spacing="6">
+      <TextBlock x:Name="LanguageLabel" Text="{loc:Str InterfaceLanguage}" />
+      <ComboBox x:Name="LanguageBox" HorizontalAlignment="Stretch"
+                ItemsSource="{Binding Languages}" SelectedItem="{Binding SelectedLanguage}"
+                DisplayMemberBinding="{Binding Label}" />
+    </StackPanel>
+    <StackPanel Spacing="6">
+      <TextBlock Text="{loc:Str Theme}" />
+      <ComboBox x:Name="ThemeBox" HorizontalAlignment="Stretch"
+                ItemsSource="{Binding Themes}" SelectedItem="{Binding SelectedTheme}"
+                DisplayMemberBinding="{Binding Label}" />
+    </StackPanel>
+    <Button HorizontalAlignment="Right" Content="{loc:Str Close}" Click="OnClose" />
+  </StackPanel>
+</Window>
