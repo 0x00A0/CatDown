@@ -64,7 +64,8 @@ public static class BlockParser
 
     static ParsedBlock Verbatim(BlockKind kind, Markdig.Syntax.Block block, string text)
     {
-        var end = block.Span.End + 1;
+        // A fence closed at the very end of the file can report a span one past the text.
+        var end = Math.Min(block.Span.End + 1, text.Length);
         while (end > block.Span.Start && text[end - 1] is '\n' or '\r')
             end--;
         var span = TextSpan.FromBounds(block.Span.Start, end);

@@ -102,6 +102,18 @@ public class BlockParserTests
             file.Blocks.Select(b => (b.Kind, b.Text)).ToList());
     }
 
+    [Theory]
+    [InlineData("Text.\n\n```\ncode\n```")]
+    [InlineData("Text.\n\n```\ncode")]
+    [InlineData("<!--\ncomment\n-->\n```")]
+    public void CodeBlockAtEndOfFileWithoutNewline(string markdown)
+    {
+        var file = BlockParser.Parse(markdown);
+        var last = file.Blocks[^1];
+        Assert.True(last.Verbatim);
+        Assert.True(last.SourceSpan.End <= markdown.Length);
+    }
+
     [Fact]
     public void ThematicBreaksAndLinkDefinitionsAreSkeleton()
     {
