@@ -18,7 +18,7 @@ public class SegmentGridTests
     static async Task<(MainWindow Window, MainWindowViewModel Vm)> OpenFile(TestProject project, string file)
     {
         Loc.Instance.SetLanguage("en");
-        var vm = new MainWindowViewModel(new FakeDialogs());
+        var vm = new MainWindowViewModel(new FakeDialogs(), TestServices.Create());
         var window = new MainWindow { DataContext = vm };
         window.Show();
         await vm.OpenProject(project.Path);

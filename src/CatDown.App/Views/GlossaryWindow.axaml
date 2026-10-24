@@ -1,0 +1,40 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:CatDown.App.ViewModels"
+        xmlns:loc="using:CatDown.App.Localization"
+        x:Class="CatDown.App.Views.GlossaryWindow"
+        x:DataType="vm:GlossaryEditorViewModel"
+        Title="{loc:Str Glossary}"
+        Width="760" Height="520" MinWidth="560" MinHeight="300"
+        WindowStartupLocation="CenterOwner">
+  <DockPanel Margin="16">
+    <DockPanel DockPanel.Dock="Bottom" Margin="0,12,0,0">
+      <Button DockPanel.Dock="Left" Content="{loc:Str AddTerm}" Command="{Binding AddCommand}" />
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+        <Button Content="{loc:Str Cancel}" Click="OnCancel" />
+        <Button x:Name="SaveButton" Classes="Primary" Theme="{DynamicResource SolidButton}" Content="{loc:Str Save}" Click="OnSave" />
+      </StackPanel>
+    </DockPanel>
+    <Grid DockPanel.Dock="Top" ColumnDefinitions="*,8,*,8,*,8,72" Margin="0,0,0,6">
+      <TextBlock Text="{loc:Str GlossarySource}" Foreground="{DynamicResource SemiColorText2}" />
+      <TextBlock Grid.Column="2" Text="{loc:Str GlossaryTarget}" Foreground="{DynamicResource SemiColorText2}" />
+      <TextBlock Grid.Column="4" Text="{loc:Str GlossaryNote}" Foreground="{DynamicResource SemiColorText2}" />
+    </Grid>
+    <ScrollViewer>
+      <ItemsControl ItemsSource="{Binding Entries}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate DataType="vm:GlossaryEntryViewModel">
+            <Grid ColumnDefinitions="*,8,*,8,*,8,72" Margin="0,0,0,6">
+              <TextBox Text="{Binding Source}" />
+              <TextBox Grid.Column="2" Text="{Binding Target}" />
+              <TextBox Grid.Column="4" Text="{Binding Note}" />
+              <Button Grid.Column="6" Theme="{DynamicResource BorderlessButton}" Content="{loc:Str Remove}"
+                      Command="{Binding $parent[ItemsControl].((vm:GlossaryEditorViewModel)DataContext).RemoveCommand}"
+                      CommandParameter="{Binding}" />
+            </Grid>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </ScrollViewer>
+  </DockPanel>
+</Window>

@@ -13,7 +13,7 @@ public class MainWindowTests
     {
         Loc.Instance.SetLanguage("en");
         var dialogs = new FakeDialogs();
-        var vm = new MainWindowViewModel(dialogs);
+        var vm = new MainWindowViewModel(dialogs, TestServices.Create());
         var window = new MainWindow { DataContext = vm };
         window.Show();
         return (window, vm, dialogs);

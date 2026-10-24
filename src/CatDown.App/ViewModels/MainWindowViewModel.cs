@@ -3,6 +3,7 @@ using CatDown.App.Localization;
 using CatDown.App.Services;
 using CatDown.Core.Alignment;
 using CatDown.Core.Editing;
+using CatDown.Core.Glossary;
 using CatDown.Core.Model;
 using CatDown.Core.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -10,9 +11,12 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace CatDown.App.ViewModels;
 
-public partial class MainWindowViewModel(IDialogService dialogs) : ObservableObject
+public partial class MainWindowViewModel(IDialogService dialogs, AppServices services) : ObservableObject
 {
     public IDialogService Dialogs { get; } = dialogs;
+    public AppServices Services { get; } = services;
+
+    Glossary _glossary = new();
 
     [ObservableProperty]
     private string _title = "CatDown";
@@ -62,6 +66,18 @@ public partial class MainWindowViewModel(IDialogService dialogs) : ObservableObj
     [RelayCommand]
     void DismissNotice() => Notice = null;
 
+    [RelayCommand]
+    async Task OpenGlossary()
+    {
+        if (Store is null)
+            return;
+        if (await Dialogs.EditGlossaryAsync(_glossary) is not { } edited)
+            return;
+        Store.SaveGlossary(edited);
+        _glossary = edited;
+        Editor?.SetGlossary(edited);
+    }
+
     public async Task<bool> OpenProject(string folder)
     {
         var store = new ProjectStore(folder);
@@ -78,6 +94,7 @@ public partial class MainWindowViewModel(IDialogService dialogs) : ObservableObj
         CloseFile();
         Store = store;
         Settings = settings;
+        _glossary = store.LoadGlossary();
         Title = $"{Path.GetFileName(store.Root.TrimEnd(Path.DirectorySeparatorChar))} - CatDown";
         ReloadFiles();
         Notice = Files.Count == 0 ? Loc.Get("NoMarkdownFiles") : null;
@@ -104,7 +121,7 @@ public partial class MainWindowViewModel(IDialogService dialogs) : ObservableObj
         CloseFile();
         var (session, changes) = FileSession.Open(Store, Settings, relativePath);
         Session = session;
-        Editor = new SegmentGridViewModel(session, Dialogs, Settings.TargetLanguage, notice => Notice = notice, UpdateProgress);
+        Editor = new SegmentGridViewModel(session, Dialogs, Settings, Services, _glossary, notice => Notice = notice, UpdateProgress);
         Notice = session.BrokenBackupPath is { } backup ? Loc.Format("BrokenFile", backup) : ChangeNotice(changes);
         UpdateProgress();
     }

@@ -57,4 +57,30 @@
   <data name="ErrorTitle" xml:space="preserve"><value>出错了</value></data>
   <data name="Progress" xml:space="preserve"><value>{0}%</value></data>
   <data name="SourceMissing" xml:space="preserve"><value>{0} 已经不在项目文件夹里了，它的翻译数据还留在 .catdown 里。</value></data>
+  <data name="Glossary" xml:space="preserve"><value>术语表</value></data>
+  <data name="GlossarySource" xml:space="preserve"><value>原文词</value></data>
+  <data name="GlossaryTarget" xml:space="preserve"><value>译法</value></data>
+  <data name="GlossaryNote" xml:space="preserve"><value>备注</value></data>
+  <data name="AddTerm" xml:space="preserve"><value>添加术语</value></data>
+  <data name="Remove" xml:space="preserve"><value>删除</value></data>
+  <data name="Save" xml:space="preserve"><value>保存</value></data>
+  <data name="Matches" xml:space="preserve"><value>翻译记忆</value></data>
+  <data name="NoMatches" xml:space="preserve"><value>没有匹配</value></data>
+  <data name="GlossaryHits" xml:space="preserve"><value>术语</value></data>
+  <data name="NoGlossaryHits" xml:space="preserve"><value>没有命中的术语</value></data>
+  <data name="MachineTranslate" xml:space="preserve"><value>机翻</value></data>
+  <data name="MachineTranslating" xml:space="preserve"><value>正在机翻…</value></data>
+  <data name="MtNotConfigured" xml:space="preserve"><value>机翻还没设置：去设置里填服务地址和模型。</value></data>
+  <data name="MtFailed" xml:space="preserve"><value>机翻失败：{0}</value></data>
+  <data name="OverwriteTitle" xml:space="preserve"><value>覆盖译文</value></data>
+  <data name="OverwriteMessage" xml:space="preserve"><value>这一句已经有译文了，用机翻结果覆盖吗？</value></data>
+  <data name="MtSection" xml:space="preserve"><value>机翻</value></data>
+  <data name="MtBaseUrl" xml:space="preserve"><value>服务地址（OpenAI 兼容接口）</value></data>
+  <data name="MtModel" xml:space="preserve"><value>模型</value></data>
+  <data name="MtApiKey" xml:space="preserve"><value>API key</value></data>
+  <data name="SaveKey" xml:space="preserve"><value>保存密钥</value></data>
+  <data name="ClearKey" xml:space="preserve"><value>删除密钥</value></data>
+  <data name="KeySaved" xml:space="preserve"><value>密钥已保存在系统凭据库里。</value></data>
+  <data name="KeyMissing" xml:space="preserve"><value>还没有保存密钥。本地模型可以不填。</value></data>
+  <data name="KeyUnavailable" xml:space="preserve"><value>这个系统没有可用的凭据库，没法保存密钥。</value></data>
 </root>

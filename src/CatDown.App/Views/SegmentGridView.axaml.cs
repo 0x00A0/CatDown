@@ -25,12 +25,27 @@ public partial class SegmentGridView : UserControl
         if (Vm is not { } vm || !Shortcuts.IsCommand(e.KeyModifiers))
             return;
         var shift = e.KeyModifiers.HasFlag(KeyModifiers.Shift);
-        var command = (e.Key, shift) switch
+        var match = e.Key switch
+        {
+            Key.D1 or Key.NumPad1 => 1,
+            Key.D2 or Key.NumPad2 => 2,
+            Key.D3 or Key.NumPad3 => 3,
+            _ => 0,
+        };
+        if (match > 0 && !shift)
+        {
+            vm.UseMatchCommand.Execute(match);
+            e.Handled = true;
+            return;
+        }
+
+        System.Windows.Input.ICommand? command = (e.Key, shift) switch
         {
             (Key.Enter, false) => vm.ConfirmCommand,
             (Key.C, true) => vm.CopySourceCommand,
             (Key.J, true) => vm.MergeCommand,
             (Key.K, true) => vm.SplitCommand,
+            (Key.M, true) => vm.MachineTranslateCommand,
             _ => null,
         };
         if (command is null)
