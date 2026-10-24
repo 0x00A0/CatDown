@@ -39,6 +39,8 @@ public partial class SegmentGridView : UserControl
         e.Handled = true;
     }
 
+    void OnSourceDoubleTapped(object? sender, TappedEventArgs e) => Vm?.EditSourceCommand.Execute(null);
+
     void OnRowPressed(object? sender, PointerPressedEventArgs e)
     {
         if (Vm is { } vm && e.Source is Control source

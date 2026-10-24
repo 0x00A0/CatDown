@@ -44,6 +44,7 @@
         <Button Theme="{DynamicResource BorderlessButton}" Content="{loc:Str CopySource}" Command="{Binding CopySourceCommand}" />
         <Button Theme="{DynamicResource BorderlessButton}" Content="{loc:Str Merge}" Command="{Binding MergeCommand}" />
         <Button Theme="{DynamicResource BorderlessButton}" Content="{loc:Str Split}" Command="{Binding SplitCommand}" />
+        <Button Theme="{DynamicResource BorderlessButton}" Content="{loc:Str EditSource}" Command="{Binding EditSourceCommand}" />
         <CheckBox Margin="12,0,0,0" Content="{loc:Str OnlyNeedsReview}" IsChecked="{Binding OnlyNeedsReview}" />
       </StackPanel>
     </Border>
@@ -61,7 +62,8 @@
               <TextBlock Text="{Binding Number}" Foreground="{DynamicResource SemiColorText3}" Margin="0,2,0,0" />
               <SelectableTextBlock x:Name="SourceText" Grid.Column="1" Margin="8,2" TextWrapping="Wrap"
                                    Text="{Binding Source}" Classes.verbatim="{Binding IsVerbatim}"
-                                   SelectionStart="{Binding SourceCaret, Mode=OneWayToSource}" />
+                                   SelectionStart="{Binding SourceCaret, Mode=OneWayToSource}"
+                                   DoubleTapped="OnSourceDoubleTapped" />
               <Panel Grid.Column="2" Margin="8,0">
                 <TextBlock Margin="0,2" TextWrapping="Wrap" Text="{Binding Target}"
                            Classes.verbatim="{Binding IsVerbatim}" IsVisible="{Binding !IsEditing}" />

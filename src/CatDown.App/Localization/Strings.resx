@@ -56,4 +56,5 @@
   <data name="ExportTitle" xml:space="preserve"><value>Export</value></data>
   <data name="ErrorTitle" xml:space="preserve"><value>Something went wrong</value></data>
   <data name="Progress" xml:space="preserve"><value>{0}%</value></data>
+  <data name="SourceMissing" xml:space="preserve"><value>{0} isn't in the project folder anymore. Its translation data is kept in .catdown.</value></data>
 </root>

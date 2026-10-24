@@ -20,6 +20,9 @@ public sealed class AvaloniaDialogService(Window owner, AppSettings appSettings,
     public Task ShowMessageAsync(string title, string message) =>
         new MessageWindow(title, message).ShowDialog(owner);
 
+    public Task<string?> EditTextAsync(string title, string text) =>
+        new EditTextWindow(title, text).ShowDialog<string?>(owner);
+
     public Task ShowSettingsAsync() =>
         new SettingsWindow { DataContext = new SettingsViewModel(appSettings, saveSettings) }.ShowDialog(owner);
 }

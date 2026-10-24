@@ -104,9 +104,35 @@ public partial class MainWindowViewModel(IDialogService dialogs) : ObservableObj
         CloseFile();
         var (session, changes) = FileSession.Open(Store, Settings, relativePath);
         Session = session;
-        Editor = new SegmentGridViewModel(session, Settings.TargetLanguage, notice => Notice = notice, UpdateProgress);
+        Editor = new SegmentGridViewModel(session, Dialogs, Settings.TargetLanguage, notice => Notice = notice, UpdateProgress);
         Notice = session.BrokenBackupPath is { } backup ? Loc.Format("BrokenFile", backup) : ChangeNotice(changes);
         UpdateProgress();
+    }
+
+    // The window came back to the front: the source may have been changed elsewhere.
+    public void OnActivated()
+    {
+        if (Store is null || Editor is null || Session is null)
+            return;
+
+        var path = Session.RelativePath;
+        if (!File.Exists(Store.ToFull(path)))
+        {
+            CloseFile();
+            ReloadFiles();
+            Notice = Loc.Format("SourceMissing", path);
+            return;
+        }
+
+        try
+        {
+            if (Editor.Refresh() is { } notice)
+                Notice = notice;
+        }
+        catch (IOException)
+        {
+            // Another program may be writing the file right now; check again next time.
+        }
     }
 
     public void CloseFile()

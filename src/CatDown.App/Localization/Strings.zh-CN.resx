@@ -56,4 +56,5 @@
   <data name="ExportTitle" xml:space="preserve"><value>导出</value></data>
   <data name="ErrorTitle" xml:space="preserve"><value>出错了</value></data>
   <data name="Progress" xml:space="preserve"><value>{0}%</value></data>
+  <data name="SourceMissing" xml:space="preserve"><value>{0} 已经不在项目文件夹里了，它的翻译数据还留在 .catdown 里。</value></data>
 </root>

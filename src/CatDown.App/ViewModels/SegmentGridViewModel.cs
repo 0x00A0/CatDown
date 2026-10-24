@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using Avalonia.Threading;
 using CatDown.App.Localization;
+using CatDown.App.Services;
 using CatDown.Core.Editing;
 using CatDown.Core.Model;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -10,14 +11,16 @@ namespace CatDown.App.ViewModels;
 
 public partial class SegmentGridViewModel : ObservableObject
 {
+    readonly IDialogService _dialogs;
     readonly string _targetLanguage;
     readonly Action<string?> _notify;
     readonly Action _saved;
     readonly DispatcherTimer _saveTimer;
 
-    public SegmentGridViewModel(FileSession session, string targetLanguage, Action<string?> notify, Action saved)
+    public SegmentGridViewModel(FileSession session, IDialogService dialogs, string targetLanguage, Action<string?> notify, Action saved)
     {
         Session = session;
+        _dialogs = dialogs;
         _targetLanguage = targetLanguage;
         _notify = notify;
         _saved = saved;
@@ -126,6 +129,16 @@ public partial class SegmentGridViewModel : ObservableObject
         }
         Rebuild();
         SaveNow();
+    }
+
+    [RelayCommand]
+    async Task EditSource()
+    {
+        if (SelectedRow is not { } row)
+            return;
+        var text = await _dialogs.EditTextAsync(Loc.Get("EditSource"), row.Block.Source);
+        if (text is not null && text != row.Block.Source)
+            EditSource(row.Block, text);
     }
 
     // Replaces a block's source text and writes it to the source file.

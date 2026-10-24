@@ -24,4 +24,8 @@ public sealed class FakeDialogs : IDialogService
     }
 
     public Task ShowSettingsAsync() => Task.CompletedTask;
+
+    public Func<string, string?> EditText { get; set; } = text => null;
+
+    public Task<string?> EditTextAsync(string title, string text) => Task.FromResult(EditText(text));
 }

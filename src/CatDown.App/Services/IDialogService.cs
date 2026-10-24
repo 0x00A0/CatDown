@@ -8,4 +8,7 @@ public interface IDialogService
     Task<LanguagePair?> AskLanguagesAsync();
     Task ShowMessageAsync(string title, string message);
     Task ShowSettingsAsync();
+
+    // Lets the user edit a piece of Markdown; null when cancelled.
+    Task<string?> EditTextAsync(string title, string text);
 }
