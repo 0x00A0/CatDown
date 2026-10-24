@@ -35,6 +35,9 @@ public partial class MainWindowViewModel(IDialogService dialogs) : ObservableObj
     [NotifyPropertyChangedFor(nameof(HasFile))]
     private FileSession? _session;
 
+    [ObservableProperty]
+    private SegmentGridViewModel? _editor;
+
     // A one-line message shown above the editor, e.g. after the source changed.
     [ObservableProperty]
     private string? _notice;
@@ -72,7 +75,7 @@ public partial class MainWindowViewModel(IDialogService dialogs) : ObservableObj
             store.SaveSettings(settings);
         }
 
-        Session = null;
+        CloseFile();
         Store = store;
         Settings = settings;
         Title = $"{Path.GetFileName(store.Root.TrimEnd(Path.DirectorySeparatorChar))} - CatDown";
@@ -98,10 +101,19 @@ public partial class MainWindowViewModel(IDialogService dialogs) : ObservableObj
     {
         if (Store is null || Settings is null)
             return;
+        CloseFile();
         var (session, changes) = FileSession.Open(Store, Settings, relativePath);
         Session = session;
+        Editor = new SegmentGridViewModel(session, Settings.TargetLanguage, notice => Notice = notice, UpdateProgress);
         Notice = session.BrokenBackupPath is { } backup ? Loc.Format("BrokenFile", backup) : ChangeNotice(changes);
         UpdateProgress();
+    }
+
+    public void CloseFile()
+    {
+        Editor?.SaveNow();
+        Editor = null;
+        Session = null;
     }
 
     public void UpdateProgress()

@@ -2,6 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:CatDown.App.ViewModels"
         xmlns:loc="using:CatDown.App.Localization"
+        xmlns:views="using:CatDown.App.Views"
         x:Class="CatDown.App.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Title="{Binding Title}"
@@ -45,6 +46,13 @@
       </TreeView>
       <GridSplitter Grid.Column="1" Background="{DynamicResource SemiColorBorder}" ResizeDirection="Columns" />
       <Panel Grid.Column="2">
+        <ContentControl x:Name="EditorHost" Content="{Binding Editor}">
+          <ContentControl.DataTemplates>
+            <DataTemplate DataType="vm:SegmentGridViewModel">
+              <views:SegmentGridView />
+            </DataTemplate>
+          </ContentControl.DataTemplates>
+        </ContentControl>
         <TextBlock x:Name="Placeholder" HorizontalAlignment="Center" VerticalAlignment="Center"
                    Foreground="{DynamicResource SemiColorText2}"
                    Text="{loc:Str NoProject}" IsVisible="{Binding !HasProject}" />

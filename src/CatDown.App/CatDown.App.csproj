@@ -11,6 +11,9 @@
     <PackageReference Include="CommunityToolkit.Mvvm" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Editor\MarkdownHighlighting.xshd" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\CatDown.Core\CatDown.Core.csproj" />
   </ItemGroup>
 </Project>
