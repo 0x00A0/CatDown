@@ -151,6 +151,76 @@ public partial class MainWindowViewModel(IDialogService dialogs) : ObservableObj
             node.Progress = ProjectStore.Progress(Session.Document);
     }
 
+    [RelayCommand]
+    async Task ExportCurrent()
+    {
+        if (Session is null || await EnsureOutputFolder() is not { } output)
+            return;
+        Editor?.SaveNow();
+        await Export([Session.RelativePath], output);
+    }
+
+    [RelayCommand]
+    async Task ExportAll()
+    {
+        if (Store is null || await EnsureOutputFolder() is not { } output)
+            return;
+        Editor?.SaveNow();
+        await Export(Store.ListMarkdownFiles(Settings), output);
+    }
+
+    // The output folder from the project settings; asks for one the first time.
+    async Task<string?> EnsureOutputFolder()
+    {
+        if (Store is null || Settings is null)
+            return null;
+        if (Store.ResolveOutputFolder(Settings) is { } existing)
+            return existing;
+
+        var picked = await Dialogs.PickFolderAsync(Loc.Get("ChooseOutputFolder"));
+        if (picked is null)
+            return null;
+        if (string.Equals(Path.GetFullPath(picked).TrimEnd(Path.DirectorySeparatorChar), Store.Root.TrimEnd(Path.DirectorySeparatorChar), StringComparison.OrdinalIgnoreCase))
+        {
+            await Dialogs.ShowMessageAsync(Loc.Get("ExportTitle"), Loc.Get("OutputIsProjectRoot"));
+            return null;
+        }
+
+        Settings.OutputFolder = Path.GetRelativePath(Store.Root, picked).Replace('\\', '/');
+        Store.SaveSettings(Settings);
+        ReloadFiles();
+        return Store.ResolveOutputFolder(Settings);
+    }
+
+    async Task Export(IReadOnlyList<string> paths, string output)
+    {
+        var exported = 0;
+        var untranslated = 0;
+        var failures = new List<string>();
+        foreach (var path in paths)
+        {
+            try
+            {
+                var session = Session?.RelativePath == path ? Session : FileSession.Open(Store!, Settings!, path).Session;
+                untranslated += session.ExportTo(output).UntranslatedCount;
+                exported++;
+            }
+            catch (Exception e) when (e is IOException or UnauthorizedAccessException or InvalidOperationException)
+            {
+                failures.Add($"{path}: {e.Message}");
+            }
+        }
+
+        var message = Loc.Format("ExportDone", exported, untranslated);
+        if (failures.Count > 0)
+            message += "\n\n" + Loc.Format("ExportFailed", failures.Count) + "\n" + string.Join("\n", failures);
+        var selected = Session?.RelativePath;
+        ReloadFiles();
+        if (selected is not null)
+            UpdateProgress();
+        await Dialogs.ShowMessageAsync(Loc.Get("ExportTitle"), message);
+    }
+
     public static string? ChangeNotice(AlignmentStats? changes) =>
         changes is { HasChanges: true } c ? Loc.Format("SourceChanged", c.NeedsReview, c.Added, c.Removed) : null;
 }

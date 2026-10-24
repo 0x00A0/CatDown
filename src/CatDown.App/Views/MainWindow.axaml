@@ -12,6 +12,14 @@
             BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="0,0,0,1">
       <DockPanel>
         <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="8">
+          <DropDownButton x:Name="ExportButton" Content="{loc:Str Export}" IsEnabled="{Binding HasProject}">
+            <DropDownButton.Flyout>
+              <MenuFlyout>
+                <MenuItem Header="{loc:Str ExportCurrent}" Command="{Binding ExportCurrentCommand}" IsEnabled="{Binding HasFile}" />
+                <MenuItem Header="{loc:Str ExportAll}" Command="{Binding ExportAllCommand}" />
+              </MenuFlyout>
+            </DropDownButton.Flyout>
+          </DropDownButton>
           <Button x:Name="SettingsButton" Theme="{DynamicResource BorderlessButton}"
                   Content="{loc:Str Settings}" Command="{Binding OpenSettingsCommand}" />
         </StackPanel>
