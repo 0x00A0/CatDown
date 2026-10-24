@@ -1,0 +1,15 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:semi="https://irihi.tech/semi"
+             x:Class="CatDown.App.App"
+             RequestedThemeVariant="Default">
+  <Application.Resources>
+    <!-- AvaloniaEdit's Simple theme expects these; Semi does not define them. -->
+    <x:Double x:Key="FontSizeNormal">14</x:Double>
+    <FontFamily x:Key="ContentControlThemeFontFamily">Segoe UI, Microsoft YaHei UI, PingFang SC, Helvetica Neue</FontFamily>
+  </Application.Resources>
+  <Application.Styles>
+    <semi:SemiTheme Locale="zh-CN" />
+    <StyleInclude Source="avares://AvaloniaEdit/Themes/Simple/AvaloniaEdit.xaml" />
+  </Application.Styles>
+</Application>

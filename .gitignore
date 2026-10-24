@@ -1,0 +1,8 @@
+docs/specs/
+docs/plans/
+bin/
+obj/
+*.user
+.vs/
+.idea/
+TestResults/
