@@ -69,7 +69,9 @@ public static class Exporter
 
     static bool IsTranslated(Segment segment) => segment.HasTranslation && segment.Target.Length > 0;
 
-    static string ToSource(string logical, ParsedBlock parsed, string newLine)
+    // Turns a block's logical text back into source text: container prefixes after newlines,
+    // single-line headings and cells, escaped pipes in cells.
+    public static string ToSource(string logical, ParsedBlock parsed, string newLine)
     {
         logical = logical.Replace("\r\n", "\n");
         if (parsed.Verbatim)
