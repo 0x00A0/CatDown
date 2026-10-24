@@ -3,6 +3,7 @@
              xmlns:vm="using:CatDown.App.ViewModels"
              xmlns:loc="using:CatDown.App.Localization"
              xmlns:editor="using:CatDown.App.Editor"
+             xmlns:preview="using:CatDown.App.Preview"
              x:Class="CatDown.App.Views.SegmentGridView"
              x:DataType="vm:SegmentGridViewModel">
   <UserControl.Styles>
@@ -39,51 +40,60 @@
 
   <DockPanel>
     <Border DockPanel.Dock="Top" Padding="8,6" BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="0,0,0,1">
-      <StackPanel Orientation="Horizontal" Spacing="4">
-        <Button x:Name="ConfirmButton" Theme="{DynamicResource BorderlessButton}" Content="{loc:Str Confirm}" Command="{Binding ConfirmCommand}" />
-        <Button Theme="{DynamicResource BorderlessButton}" Content="{loc:Str CopySource}" Command="{Binding CopySourceCommand}" />
-        <Button Theme="{DynamicResource BorderlessButton}" Content="{loc:Str Merge}" Command="{Binding MergeCommand}" />
-        <Button Theme="{DynamicResource BorderlessButton}" Content="{loc:Str Split}" Command="{Binding SplitCommand}" />
-        <Button Theme="{DynamicResource BorderlessButton}" Content="{loc:Str EditSource}" Command="{Binding EditSourceCommand}" />
-        <CheckBox Margin="12,0,0,0" Content="{loc:Str OnlyNeedsReview}" IsChecked="{Binding OnlyNeedsReview}" />
-      </StackPanel>
+      <DockPanel>
+        <Button x:Name="PreviewButton" DockPanel.Dock="Right" Content="{Binding PreviewButtonText}" Command="{Binding TogglePreviewCommand}" />
+        <StackPanel Orientation="Horizontal" Spacing="4" IsEnabled="{Binding !IsPreview}">
+          <Button x:Name="ConfirmButton" Theme="{DynamicResource BorderlessButton}" Content="{loc:Str Confirm}" Command="{Binding ConfirmCommand}" />
+          <Button Theme="{DynamicResource BorderlessButton}" Content="{loc:Str CopySource}" Command="{Binding CopySourceCommand}" />
+          <Button Theme="{DynamicResource BorderlessButton}" Content="{loc:Str Merge}" Command="{Binding MergeCommand}" />
+          <Button Theme="{DynamicResource BorderlessButton}" Content="{loc:Str Split}" Command="{Binding SplitCommand}" />
+          <Button Theme="{DynamicResource BorderlessButton}" Content="{loc:Str EditSource}" Command="{Binding EditSourceCommand}" />
+          <CheckBox Margin="12,0,0,0" VerticalAlignment="Center" Content="{loc:Str OnlyNeedsReview}" IsChecked="{Binding OnlyNeedsReview}" />
+        </StackPanel>
+      </DockPanel>
     </Border>
 
-    <Grid DockPanel.Dock="Top" ColumnDefinitions="44,*,*,32" Margin="8,6">
-      <TextBlock Grid.Column="1" Text="{loc:Str ColumnSource}" Foreground="{DynamicResource SemiColorText2}" Margin="8,0" />
-      <TextBlock Grid.Column="2" Text="{loc:Str ColumnTarget}" Foreground="{DynamicResource SemiColorText2}" Margin="8,0" />
-    </Grid>
+    <Panel>
+      <preview:MarkdownView x:Name="PreviewView" IsVisible="{Binding IsPreview}" Markdown="{Binding PreviewMarkdown}" />
 
-    <ListBox x:Name="RowList" ItemsSource="{Binding Rows}" SelectedItem="{Binding SelectedRow}">
-      <ListBox.ItemTemplate>
-        <DataTemplate DataType="vm:SegmentRowViewModel">
-          <Border Classes="row" Classes.blockStart="{Binding IsBlockStart}">
-            <Grid ColumnDefinitions="44,*,*,32">
-              <TextBlock Text="{Binding Number}" Foreground="{DynamicResource SemiColorText3}" Margin="0,2,0,0" />
-              <SelectableTextBlock x:Name="SourceText" Grid.Column="1" Margin="8,2" TextWrapping="Wrap"
-                                   Text="{Binding Source}" Classes.verbatim="{Binding IsVerbatim}"
-                                   SelectionStart="{Binding SourceCaret, Mode=OneWayToSource}"
-                                   DoubleTapped="OnSourceDoubleTapped" />
-              <Panel Grid.Column="2" Margin="8,0">
-                <TextBlock Margin="0,2" TextWrapping="Wrap" Text="{Binding Target}"
-                           Classes.verbatim="{Binding IsVerbatim}" IsVisible="{Binding !IsEditing}" />
-                <ContentControl Content="{Binding EditTarget}">
-                  <ContentControl.ContentTemplate>
-                    <DataTemplate DataType="vm:SegmentRowViewModel">
-                      <Border BorderBrush="{DynamicResource SemiColorPrimary}" BorderThickness="1" CornerRadius="4" Padding="4,2">
-                        <editor:MarkdownEditor x:Name="TargetEditor" Markdown="{Binding Target}" FocusOnAttach="True" MinHeight="24" />
-                      </Border>
-                    </DataTemplate>
-                  </ContentControl.ContentTemplate>
-                </ContentControl>
-              </Panel>
-              <TextBlock Grid.Column="3" Classes="status" Margin="0,2,0,0"
-                         Classes.draft="{Binding IsDraft}" Classes.confirmed="{Binding IsConfirmed}" Classes.review="{Binding NeedsReview}"
-                         Text="{Binding StatusGlyph}" ToolTip.Tip="{Binding StatusText}" />
-            </Grid>
-          </Border>
-        </DataTemplate>
-      </ListBox.ItemTemplate>
-    </ListBox>
+      <DockPanel IsVisible="{Binding !IsPreview}">
+        <Grid DockPanel.Dock="Top" ColumnDefinitions="44,*,*,32" Margin="8,6">
+          <TextBlock Grid.Column="1" Text="{loc:Str ColumnSource}" Foreground="{DynamicResource SemiColorText2}" Margin="8,0" />
+          <TextBlock Grid.Column="2" Text="{loc:Str ColumnTarget}" Foreground="{DynamicResource SemiColorText2}" Margin="8,0" />
+        </Grid>
+
+        <ListBox x:Name="RowList" ItemsSource="{Binding Rows}" SelectedItem="{Binding SelectedRow}">
+          <ListBox.ItemTemplate>
+            <DataTemplate DataType="vm:SegmentRowViewModel">
+              <Border Classes="row" Classes.blockStart="{Binding IsBlockStart}">
+                <Grid ColumnDefinitions="44,*,*,32">
+                  <TextBlock Text="{Binding Number}" Foreground="{DynamicResource SemiColorText3}" Margin="0,2,0,0" />
+                  <SelectableTextBlock x:Name="SourceText" Grid.Column="1" Margin="8,2" TextWrapping="Wrap"
+                                       Text="{Binding Source}" Classes.verbatim="{Binding IsVerbatim}"
+                                       SelectionStart="{Binding SourceCaret, Mode=OneWayToSource}"
+                                       DoubleTapped="OnSourceDoubleTapped" />
+                  <Panel Grid.Column="2" Margin="8,0">
+                    <TextBlock Margin="0,2" TextWrapping="Wrap" Text="{Binding Target}"
+                               Classes.verbatim="{Binding IsVerbatim}" IsVisible="{Binding !IsEditing}" />
+                    <ContentControl Content="{Binding EditTarget}">
+                      <ContentControl.ContentTemplate>
+                        <DataTemplate DataType="vm:SegmentRowViewModel">
+                          <Border BorderBrush="{DynamicResource SemiColorPrimary}" BorderThickness="1" CornerRadius="4" Padding="4,2">
+                            <editor:MarkdownEditor x:Name="TargetEditor" Markdown="{Binding Target}" FocusOnAttach="True" MinHeight="24" />
+                          </Border>
+                        </DataTemplate>
+                      </ContentControl.ContentTemplate>
+                    </ContentControl>
+                  </Panel>
+                  <TextBlock Grid.Column="3" Classes="status" Margin="0,2,0,0"
+                             Classes.draft="{Binding IsDraft}" Classes.confirmed="{Binding IsConfirmed}" Classes.review="{Binding NeedsReview}"
+                             Text="{Binding StatusGlyph}" ToolTip.Tip="{Binding StatusText}" />
+                </Grid>
+              </Border>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </DockPanel>
+    </Panel>
   </DockPanel>
 </UserControl>

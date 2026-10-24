@@ -41,6 +41,23 @@ public partial class SegmentGridViewModel : ObservableObject
     [ObservableProperty]
     private bool _onlyNeedsReview;
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(PreviewButtonText))]
+    private bool _isPreview;
+
+    // The whole translated document, rendered when the preview is on.
+    [ObservableProperty]
+    private string? _previewMarkdown;
+
+    public string PreviewButtonText => Loc.Get(IsPreview ? "BackToEditing" : "Preview");
+
+    [RelayCommand]
+    void TogglePreview()
+    {
+        PreviewMarkdown = IsPreview ? null : Session.Export().Text;
+        IsPreview = !IsPreview;
+    }
+
     public bool HasPendingSave => _saveTimer.IsEnabled;
 
     partial void OnSelectedRowChanged(SegmentRowViewModel? oldValue, SegmentRowViewModel? newValue)
