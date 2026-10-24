@@ -19,7 +19,10 @@ public class App : Application
             var settingsStore = new AppSettingsStore(AppSettingsStore.DefaultFolder());
             var settings = settingsStore.Load();
             Appearance.Apply(settings);
-            desktop.MainWindow = new MainWindow { DataContext = new MainWindowViewModel() };
+
+            var window = new MainWindow();
+            window.DataContext = new MainWindowViewModel(new AvaloniaDialogService(window, settings, settingsStore.Save));
+            desktop.MainWindow = window;
         }
         base.OnFrameworkInitializationCompleted();
     }

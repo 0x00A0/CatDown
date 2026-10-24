@@ -90,6 +90,27 @@ public sealed class ProjectStore(string root)
 
     public void SaveFile(FileDocument document) => WriteJson(DocumentPath(document.SourcePath), document);
 
+    // Confirmed share of translatable segments in 0..100, or null when the file has no readable
+    // translation data yet. Unlike LoadFile, never touches a broken file.
+    public int? ReadProgress(string relativePath)
+    {
+        try
+        {
+            var path = DocumentPath(relativePath);
+            return File.Exists(path) ? Progress(CatDownJson.Deserialize<FileDocument>(File.ReadAllText(path))) : null;
+        }
+        catch (JsonException)
+        {
+            return null;
+        }
+    }
+
+    public static int Progress(FileDocument document)
+    {
+        var segments = document.Blocks.Where(b => !b.Verbatim).SelectMany(b => b.Segments).ToList();
+        return segments.Count == 0 ? 100 : segments.Count(s => s.Status == SegmentStatus.Confirmed) * 100 / segments.Count;
+    }
+
     public SourceText ReadSource(string relativePath)
     {
         var bytes = File.ReadAllBytes(ToFull(relativePath));

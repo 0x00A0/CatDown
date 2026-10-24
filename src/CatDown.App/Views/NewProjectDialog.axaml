@@ -1,0 +1,35 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:CatDown.App.ViewModels"
+        xmlns:loc="using:CatDown.App.Localization"
+        x:Class="CatDown.App.Views.NewProjectDialog"
+        x:DataType="vm:NewProjectViewModel"
+        Title="{loc:Str NewProjectTitle}"
+        Width="440" SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+  <StackPanel Margin="24" Spacing="16">
+    <TextBlock Text="{loc:Str NewProjectHint}" TextWrapping="Wrap" />
+    <Grid ColumnDefinitions="*,16,*">
+      <StackPanel Spacing="6">
+        <TextBlock Text="{loc:Str SourceLanguage}" />
+        <ComboBox x:Name="SourceBox" HorizontalAlignment="Stretch"
+                  ItemsSource="{Binding Languages}" SelectedItem="{Binding Source}"
+                  DisplayMemberBinding="{Binding Label}" />
+      </StackPanel>
+      <StackPanel Grid.Column="2" Spacing="6">
+        <TextBlock Text="{loc:Str TargetLanguage}" />
+        <ComboBox x:Name="TargetBox" HorizontalAlignment="Stretch"
+                  ItemsSource="{Binding Languages}" SelectedItem="{Binding Target}"
+                  DisplayMemberBinding="{Binding Label}" />
+      </StackPanel>
+    </Grid>
+    <TextBlock Text="{Binding Error}" IsVisible="{Binding !IsValid}"
+               Foreground="{DynamicResource SemiColorDanger}" TextWrapping="Wrap" />
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+      <Button Content="{loc:Str Cancel}" Click="OnCancel" />
+      <Button x:Name="OkButton" Classes="Primary" Theme="{DynamicResource SolidButton}"
+              Content="{loc:Str Ok}" IsEnabled="{Binding IsValid}" Click="OnOk" />
+    </StackPanel>
+  </StackPanel>
+</Window>
