@@ -83,25 +83,16 @@ public class ExportTests
         using var project = new TestProject();
         var (vm, dialogs) = await Open(project);
         var output = Path.Combine(project.Path, "out");
-        var locked = Path.Combine(output, "README.md");
-        Directory.CreateDirectory(output);
-        File.WriteAllText(locked, "old");
-        File.SetAttributes(locked, FileAttributes.ReadOnly);
+        // A folder where README.md should go makes that one file fail on every platform.
+        Directory.CreateDirectory(Path.Combine(output, "README.md"));
         dialogs.FolderToPick = output;
 
-        try
-        {
-            await vm.ExportAllCommand.ExecuteAsync(null);
+        await vm.ExportAllCommand.ExecuteAsync(null);
 
-            var message = Assert.Single(dialogs.Messages).Message;
-            Assert.Contains(Loc.Format("ExportFailed", 1), message);
-            Assert.Contains("README.md", message);
-            Assert.True(File.Exists(Path.Combine(output, "guide", "api.md")));
-            Assert.True(File.Exists(Path.Combine(output, "guide", "setup.md")));
-        }
-        finally
-        {
-            File.SetAttributes(locked, FileAttributes.Normal);
-        }
+        var message = Assert.Single(dialogs.Messages).Message;
+        Assert.Contains(Loc.Format("ExportFailed", 1), message);
+        Assert.Contains("README.md", message);
+        Assert.True(File.Exists(Path.Combine(output, "guide", "api.md")));
+        Assert.True(File.Exists(Path.Combine(output, "guide", "setup.md")));
     }
 }
