@@ -12,6 +12,16 @@
             BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="0,0,0,1">
       <DockPanel>
         <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="8">
+          <DropDownButton x:Name="RulesButton" Theme="{DynamicResource BorderlessDropDownButton}"
+                          Content="{loc:Str SegmentationRules}" IsEnabled="{Binding HasProject}">
+            <DropDownButton.Flyout>
+              <MenuFlyout>
+                <MenuItem Header="{loc:Str ImportSrx}" Command="{Binding ImportSrxCommand}" />
+                <MenuItem Header="{loc:Str RemoveSrx}" Command="{Binding RemoveSrxCommand}" />
+                <MenuItem Header="{loc:Str ResegmentFile}" Command="{Binding ResegmentFileCommand}" IsEnabled="{Binding HasFile}" />
+              </MenuFlyout>
+            </DropDownButton.Flyout>
+          </DropDownButton>
           <Button x:Name="GlossaryButton" Theme="{DynamicResource BorderlessButton}" Content="{loc:Str Glossary}"
                   Command="{Binding OpenGlossaryCommand}" IsEnabled="{Binding HasProject}" />
           <DropDownButton x:Name="ExportButton" Content="{loc:Str Export}" IsEnabled="{Binding HasProject}">

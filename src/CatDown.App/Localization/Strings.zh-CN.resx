@@ -83,4 +83,35 @@
   <data name="KeySaved" xml:space="preserve"><value>密钥已保存在系统凭据库里。</value></data>
   <data name="KeyMissing" xml:space="preserve"><value>还没有保存密钥。本地模型可以不填。</value></data>
   <data name="KeyUnavailable" xml:space="preserve"><value>这个系统没有可用的凭据库，没法保存密钥。</value></data>
+  <data name="SideBySide" xml:space="preserve"><value>并排对照</value></data>
+  <data name="GridLayout" xml:space="preserve"><value>句段表格</value></data>
+  <data name="SegmentationRules" xml:space="preserve"><value>切句规则</value></data>
+  <data name="ImportSrx" xml:space="preserve"><value>导入 SRX 规则…</value></data>
+  <data name="RemoveSrx" xml:space="preserve"><value>移除 SRX 规则</value></data>
+  <data name="ResegmentFile" xml:space="preserve"><value>按当前规则重新切这个文件</value></data>
+  <data name="SrxImported" xml:space="preserve"><value>已导入 SRX 规则。已有的文件不会自动重新切句，需要时用“按当前规则重新切这个文件”。</value></data>
+  <data name="SrxRemoved" xml:space="preserve"><value>已移除 SRX 规则，改回内置规则。</value></data>
+  <data name="SrxInvalid" xml:space="preserve"><value>这个文件不是可用的 SRX：{0}</value></data>
+  <data name="LlmSegment" xml:space="preserve"><value>用大模型切句</value></data>
+  <data name="LlmSegmentBlock" xml:space="preserve"><value>当前段落</value></data>
+  <data name="LlmSegmentFile" xml:space="preserve"><value>整个文件</value></data>
+  <data name="ResegmentDone" xml:space="preserve"><value>重新切了 {0} 段，跳过 {1} 段。</value></data>
+  <data name="LlmSegmentFailed" xml:space="preserve"><value>大模型切句失败：{0}</value></data>
+  <data name="TranslatedBlockTitle" xml:space="preserve"><value>这一段已经有译文</value></data>
+  <data name="TranslatedBlockQuestion" xml:space="preserve"><value>重新切句以后，已有的译文怎么处理？</value></data>
+  <data name="ActionSkip" xml:space="preserve"><value>跳过这一段</value></data>
+  <data name="ActionMerge" xml:space="preserve"><value>译文放进第一句，全部标为需复核</value></data>
+  <data name="ActionRealign" xml:space="preserve"><value>用大模型把译文按新句段拆开</value></data>
+  <data name="ApplyToAll" xml:space="preserve"><value>本次全部这样处理</value></data>
+  <data name="TranslationMemorySection" xml:space="preserve"><value>翻译记忆</value></data>
+  <data name="TmCount" xml:space="preserve"><value>共 {0} 条</value></data>
+  <data name="ImportTmx" xml:space="preserve"><value>导入 TMX…</value></data>
+  <data name="ExportTmx" xml:space="preserve"><value>导出 TMX…</value></data>
+  <data name="TmxImported" xml:space="preserve"><value>导入了 {0} 条。</value></data>
+  <data name="TmxExported" xml:space="preserve"><value>已导出到 {0}</value></data>
+  <data name="FileInvalid" xml:space="preserve"><value>文件读不了：{0}</value></data>
+  <data name="ImportCsv" xml:space="preserve"><value>导入 CSV…</value></data>
+  <data name="ExportCsv" xml:space="preserve"><value>导出 CSV…</value></data>
+  <data name="CsvImported" xml:space="preserve"><value>导入了 {0} 条术语。</value></data>
+  <data name="CsvExported" xml:space="preserve"><value>已导出到 {0}</value></data>
 </root>

@@ -83,4 +83,35 @@
   <data name="KeySaved" xml:space="preserve"><value>The key is saved in the system credential store.</value></data>
   <data name="KeyMissing" xml:space="preserve"><value>No key saved. Local models may not need one.</value></data>
   <data name="KeyUnavailable" xml:space="preserve"><value>This system has no credential store, so the key can't be saved.</value></data>
+  <data name="SideBySide" xml:space="preserve"><value>Side by side</value></data>
+  <data name="GridLayout" xml:space="preserve"><value>Segment grid</value></data>
+  <data name="SegmentationRules" xml:space="preserve"><value>Segmentation rules</value></data>
+  <data name="ImportSrx" xml:space="preserve"><value>Import SRX rules…</value></data>
+  <data name="RemoveSrx" xml:space="preserve"><value>Remove SRX rules</value></data>
+  <data name="ResegmentFile" xml:space="preserve"><value>Resegment this file with the current rules</value></data>
+  <data name="SrxImported" xml:space="preserve"><value>SRX rules imported. Existing files keep their segments until you resegment them.</value></data>
+  <data name="SrxRemoved" xml:space="preserve"><value>SRX rules removed. The built-in rules are used again.</value></data>
+  <data name="SrxInvalid" xml:space="preserve"><value>This file isn't usable SRX: {0}</value></data>
+  <data name="LlmSegment" xml:space="preserve"><value>Split with a model</value></data>
+  <data name="LlmSegmentBlock" xml:space="preserve"><value>This paragraph</value></data>
+  <data name="LlmSegmentFile" xml:space="preserve"><value>Whole file</value></data>
+  <data name="ResegmentDone" xml:space="preserve"><value>Resegmented {0} blocks, skipped {1}.</value></data>
+  <data name="LlmSegmentFailed" xml:space="preserve"><value>Splitting with the model failed: {0}</value></data>
+  <data name="TranslatedBlockTitle" xml:space="preserve"><value>This paragraph is already translated</value></data>
+  <data name="TranslatedBlockQuestion" xml:space="preserve"><value>How should the existing translation be handled after resegmenting?</value></data>
+  <data name="ActionSkip" xml:space="preserve"><value>Skip this paragraph</value></data>
+  <data name="ActionMerge" xml:space="preserve"><value>Put the translation in the first sentence and mark all for review</value></data>
+  <data name="ActionRealign" xml:space="preserve"><value>Let the model split the translation to match</value></data>
+  <data name="ApplyToAll" xml:space="preserve"><value>Do the same for the rest</value></data>
+  <data name="TranslationMemorySection" xml:space="preserve"><value>Translation memory</value></data>
+  <data name="TmCount" xml:space="preserve"><value>{0} entries</value></data>
+  <data name="ImportTmx" xml:space="preserve"><value>Import TMX…</value></data>
+  <data name="ExportTmx" xml:space="preserve"><value>Export TMX…</value></data>
+  <data name="TmxImported" xml:space="preserve"><value>Imported {0} entries.</value></data>
+  <data name="TmxExported" xml:space="preserve"><value>Exported to {0}</value></data>
+  <data name="FileInvalid" xml:space="preserve"><value>The file couldn't be read: {0}</value></data>
+  <data name="ImportCsv" xml:space="preserve"><value>Import CSV…</value></data>
+  <data name="ExportCsv" xml:space="preserve"><value>Export CSV…</value></data>
+  <data name="CsvImported" xml:space="preserve"><value>Imported {0} terms.</value></data>
+  <data name="CsvExported" xml:space="preserve"><value>Exported to {0}</value></data>
 </root>

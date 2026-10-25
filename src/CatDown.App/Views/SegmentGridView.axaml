@@ -5,6 +5,7 @@
              xmlns:editor="using:CatDown.App.Editor"
              xmlns:preview="using:CatDown.App.Preview"
              xmlns:controls="using:CatDown.App.Controls"
+             xmlns:views="using:CatDown.App.Views"
              x:Class="CatDown.App.Views.SegmentGridView"
              x:DataType="vm:SegmentGridViewModel">
   <UserControl.Styles>
@@ -43,15 +44,25 @@
     <Border DockPanel.Dock="Top" Padding="8,6" BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="0,0,0,1">
       <DockPanel>
         <Button x:Name="PreviewButton" DockPanel.Dock="Right" Content="{Binding PreviewButtonText}" Command="{Binding TogglePreviewCommand}" />
-        <StackPanel Orientation="Horizontal" Spacing="4" IsEnabled="{Binding !IsPreview}">
+        <Button x:Name="LayoutButton" DockPanel.Dock="Right" Margin="0,0,8,0" Theme="{DynamicResource BorderlessButton}"
+                Content="{Binding LayoutButtonText}" Command="{Binding ToggleLayoutCommand}" IsEnabled="{Binding !IsPreview}" />
+        <WrapPanel IsEnabled="{Binding !IsPreview}">
           <Button x:Name="ConfirmButton" Theme="{DynamicResource BorderlessButton}" Content="{loc:Str Confirm}" Command="{Binding ConfirmCommand}" />
           <Button Theme="{DynamicResource BorderlessButton}" Content="{loc:Str MachineTranslate}" Command="{Binding MachineTranslateCommand}" />
           <Button Theme="{DynamicResource BorderlessButton}" Content="{loc:Str CopySource}" Command="{Binding CopySourceCommand}" />
           <Button Theme="{DynamicResource BorderlessButton}" Content="{loc:Str Merge}" Command="{Binding MergeCommand}" />
           <Button Theme="{DynamicResource BorderlessButton}" Content="{loc:Str Split}" Command="{Binding SplitCommand}" />
           <Button Theme="{DynamicResource BorderlessButton}" Content="{loc:Str EditSource}" Command="{Binding EditSourceCommand}" />
+          <DropDownButton Theme="{DynamicResource BorderlessDropDownButton}" Content="{loc:Str LlmSegment}" IsEnabled="{Binding !IsTranslating}">
+            <DropDownButton.Flyout>
+              <MenuFlyout>
+                <MenuItem Header="{loc:Str LlmSegmentBlock}" Command="{Binding LlmSegmentBlockCommand}" />
+                <MenuItem Header="{loc:Str LlmSegmentFile}" Command="{Binding LlmSegmentFileCommand}" />
+              </MenuFlyout>
+            </DropDownButton.Flyout>
+          </DropDownButton>
           <CheckBox Margin="12,0,0,0" VerticalAlignment="Center" Content="{loc:Str OnlyNeedsReview}" IsChecked="{Binding OnlyNeedsReview}" />
-        </StackPanel>
+        </WrapPanel>
       </DockPanel>
     </Border>
 
@@ -59,7 +70,7 @@
       <preview:MarkdownView x:Name="PreviewView" IsVisible="{Binding IsPreview}" Markdown="{Binding PreviewMarkdown}" />
 
       <DockPanel IsVisible="{Binding !IsPreview}">
-        <Grid DockPanel.Dock="Top" ColumnDefinitions="44,*,*,32" Margin="8,6">
+        <Grid DockPanel.Dock="Top" ColumnDefinitions="44,*,*,32" Margin="8,6" IsVisible="{Binding !IsSideBySide}">
           <TextBlock Grid.Column="1" Text="{loc:Str ColumnSource}" Foreground="{DynamicResource SemiColorText2}" Margin="8,0" />
           <TextBlock Grid.Column="2" Text="{loc:Str ColumnTarget}" Foreground="{DynamicResource SemiColorText2}" Margin="8,0" />
         </Grid>
@@ -113,7 +124,8 @@
           </Grid>
         </Border>
 
-        <ListBox x:Name="RowList" ItemsSource="{Binding Rows}" SelectedItem="{Binding SelectedRow}">
+        <views:SideBySideView x:Name="SideBySide" IsVisible="{Binding IsSideBySide}" />
+        <ListBox x:Name="RowList" ItemsSource="{Binding Rows}" SelectedItem="{Binding SelectedRow}" IsVisible="{Binding !IsSideBySide}">
           <ListBox.ItemTemplate>
             <DataTemplate DataType="vm:SegmentRowViewModel">
               <Border Classes="row" Classes.blockStart="{Binding IsBlockStart}">

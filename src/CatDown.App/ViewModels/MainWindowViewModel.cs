@@ -67,6 +67,34 @@ public partial class MainWindowViewModel(IDialogService dialogs, AppServices ser
     void DismissNotice() => Notice = null;
 
     [RelayCommand]
+    async Task ImportSrx()
+    {
+        if (Store is null || await Dialogs.PickFileAsync(Loc.Get("ImportSrx"), "srx") is not { } path)
+            return;
+        try
+        {
+            Store.ImportSrx(path);
+            Notice = Loc.Get("SrxImported");
+        }
+        catch (Exception e) when (e is FormatException or IOException or UnauthorizedAccessException)
+        {
+            await Dialogs.ShowMessageAsync(Loc.Get("SegmentationRules"), Loc.Format("SrxInvalid", e.Message));
+        }
+    }
+
+    [RelayCommand]
+    void RemoveSrx()
+    {
+        if (Store is null)
+            return;
+        Store.RemoveSrx();
+        Notice = Loc.Get("SrxRemoved");
+    }
+
+    [RelayCommand]
+    Task ResegmentFile() => Editor?.ResegmentWithRules() ?? Task.CompletedTask;
+
+    [RelayCommand]
     async Task OpenGlossary()
     {
         if (Store is null)
@@ -121,7 +149,8 @@ public partial class MainWindowViewModel(IDialogService dialogs, AppServices ser
         CloseFile();
         var (session, changes) = FileSession.Open(Store, Settings, relativePath);
         Session = session;
-        Editor = new SegmentGridViewModel(session, Dialogs, Settings, Services, _glossary, notice => Notice = notice, UpdateProgress);
+        Editor = new SegmentGridViewModel(session, Dialogs, Settings, Services, _glossary, notice => Notice = notice, UpdateProgress,
+            () => Store.SaveSettings(Settings));
         Notice = session.BrokenBackupPath is { } backup ? Loc.Format("BrokenFile", backup) : ChangeNotice(changes);
         UpdateProgress();
     }

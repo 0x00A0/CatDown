@@ -42,6 +42,18 @@
       <TextBlock x:Name="KeyStatusText" Text="{Binding KeyStatus}" Foreground="{DynamicResource SemiColorText2}" TextWrapping="Wrap" />
     </StackPanel>
 
+    <Border Height="1" Background="{DynamicResource SemiColorBorder}" />
+    <DockPanel>
+      <TextBlock Text="{loc:Str TranslationMemorySection}" FontWeight="SemiBold" />
+      <TextBlock x:Name="TmCountText" Margin="12,0,0,0" Text="{Binding TmCount}" Foreground="{DynamicResource SemiColorText2}" />
+    </DockPanel>
+    <StackPanel Orientation="Horizontal" Spacing="8">
+      <Button Content="{loc:Str ImportTmx}" Command="{Binding ImportTmxCommand}" />
+      <Button Content="{loc:Str ExportTmx}" Command="{Binding ExportTmxCommand}" />
+    </StackPanel>
+    <TextBlock Text="{Binding TmStatus}" Foreground="{DynamicResource SemiColorText2}" TextWrapping="Wrap"
+               IsVisible="{Binding TmStatus, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+
     <Button HorizontalAlignment="Right" Content="{loc:Str Close}" Click="OnClose" />
   </StackPanel>
 </Window>

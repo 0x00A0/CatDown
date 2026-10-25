@@ -1,4 +1,5 @@
 using CatDown.App.Services;
+using CatDown.Core.Editing;
 using CatDown.Core.Glossary;
 
 namespace CatDown.App.Tests;
@@ -42,4 +43,20 @@ public sealed class FakeDialogs : IDialogService
     public Func<Glossary, Glossary?> EditGlossary { get; set; } = _ => null;
 
     public Task<Glossary?> EditGlossaryAsync(Glossary glossary) => Task.FromResult(EditGlossary(glossary));
+
+    public string? FileToPick { get; set; }
+    public string? SavePath { get; set; }
+
+    public Task<string?> PickFileAsync(string title, string extension) => Task.FromResult(FileToPick);
+
+    public Task<string?> PickSavePathAsync(string title, string suggestedName, string extension) => Task.FromResult(SavePath);
+
+    public Queue<ResegmentChoice> ResegmentChoices { get; } = [];
+    public List<string> AskedParagraphs { get; } = [];
+
+    public Task<ResegmentChoice> AskTranslatedBlockAsync(string paragraph, bool canRealign)
+    {
+        AskedParagraphs.Add(paragraph);
+        return Task.FromResult(ResegmentChoices.Count > 0 ? ResegmentChoices.Dequeue() : new ResegmentChoice(TranslatedBlockAction.Skip, false));
+    }
 }
