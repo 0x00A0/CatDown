@@ -30,9 +30,14 @@ public class App : Application
             Appearance.Apply(services.Settings);
 
             var window = new MainWindow();
-            window.DataContext = new MainWindowViewModel(new AvaloniaDialogService(window, services), services);
+            var viewModel = new MainWindowViewModel(new AvaloniaDialogService(window, services), services);
+            window.DataContext = viewModel;
             desktop.MainWindow = window;
             desktop.Exit += (_, _) => services.Memory.Dispose();
+
+            // `CatDown <folder>` opens that project right away.
+            if (desktop.Args is [var projectFolder, ..] && Directory.Exists(projectFolder))
+                window.Opened += async (_, _) => await viewModel.OpenProject(projectFolder);
         }
         base.OnFrameworkInitializationCompleted();
     }
