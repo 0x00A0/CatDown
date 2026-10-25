@@ -30,6 +30,40 @@ public sealed class ProjectStore(string root)
 
     public void SaveSettings(ProjectSettings settings) => WriteJson(SettingsPath, settings);
 
+    string SrxPath => Path.Combine(DataFolder, "segmentation.srx");
+
+    public bool HasSrx => File.Exists(SrxPath);
+
+    // The imported SRX rules, or null when there are none or they no longer parse.
+    public Segmentation.SrxDocument? LoadSrx()
+    {
+        if (!HasSrx)
+            return null;
+        try
+        {
+            return Segmentation.SrxDocument.Parse(File.ReadAllText(SrxPath));
+        }
+        catch (FormatException)
+        {
+            return null;
+        }
+    }
+
+    // Checks that the file is usable SRX, then copies it into the project.
+    public Segmentation.SrxDocument ImportSrx(string path)
+    {
+        var text = File.ReadAllText(path);
+        var srx = Segmentation.SrxDocument.Parse(text);
+        AtomicWrite(SrxPath, stream => stream.Write(Utf8NoBom.GetBytes(text)));
+        return srx;
+    }
+
+    public void RemoveSrx()
+    {
+        if (HasSrx)
+            File.Delete(SrxPath);
+    }
+
     string GlossaryPath => Path.Combine(DataFolder, "glossary.json");
 
     public Glossary.Glossary LoadGlossary()

@@ -25,7 +25,7 @@ public sealed class FileSession
     {
         _store = store;
         _settings = settings;
-        _builder = CreateBuilder(settings);
+        _builder = CreateBuilder(store, settings);
         RelativePath = relativePath;
         Source = source;
         Parsed = parsed;
@@ -33,15 +33,23 @@ public sealed class FileSession
         BrokenBackupPath = brokenBackup;
     }
 
-    public static DocumentBuilder CreateBuilder(ProjectSettings settings) =>
-        new(new RuleSentenceSplitter(settings.Abbreviations), settings.SourceLanguage);
+    public static DocumentBuilder CreateBuilder(ProjectStore store, ProjectSettings settings) =>
+        new(CreateSplitter(store, settings), settings.SourceLanguage);
+
+    // The project's SRX rules if it has any (with the built-in rules for languages they skip),
+    // otherwise the built-in rules.
+    public static ISentenceSplitter CreateSplitter(ProjectStore store, ProjectSettings settings)
+    {
+        var rules = new RuleSentenceSplitter(settings.Abbreviations);
+        return store.LoadSrx() is { } srx ? new SrxSentenceSplitter(srx, rules) : rules;
+    }
 
     // Opens the file and brings its translation document up to date with the source.
     public static (FileSession Session, AlignmentStats? Changes) Open(ProjectStore store, ProjectSettings settings, string relativePath)
     {
         var source = store.ReadSource(relativePath);
         var parsed = BlockParser.Parse(source.Text);
-        var builder = CreateBuilder(settings);
+        var builder = CreateBuilder(store, settings);
         var load = store.LoadFile(relativePath);
 
         FileDocument document;
