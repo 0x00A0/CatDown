@@ -70,7 +70,7 @@
   <data name="NoGlossaryHits" xml:space="preserve"><value>没有命中的术语</value></data>
   <data name="MachineTranslate" xml:space="preserve"><value>机翻</value></data>
   <data name="MachineTranslating" xml:space="preserve"><value>正在机翻…</value></data>
-  <data name="MtNotConfigured" xml:space="preserve"><value>机翻还没设置：去设置里填服务地址和模型。</value></data>
+  <data name="MtNotConfigured" xml:space="preserve"><value>机翻还没设置：去设置里选好服务，填上模型和需要的 API key。</value></data>
   <data name="MtFailed" xml:space="preserve"><value>机翻失败：{0}</value></data>
   <data name="OverwriteTitle" xml:space="preserve"><value>覆盖译文</value></data>
   <data name="OverwriteMessage" xml:space="preserve"><value>这一句已经有译文了，用机翻结果覆盖吗？</value></data>
@@ -114,4 +114,9 @@
   <data name="ExportCsv" xml:space="preserve"><value>导出 CSV…</value></data>
   <data name="CsvImported" xml:space="preserve"><value>导入了 {0} 条术语。</value></data>
   <data name="CsvExported" xml:space="preserve"><value>已导出到 {0}</value></data>
+  <data name="MtProvider" xml:space="preserve"><value>服务类型</value></data>
+  <data name="Provider_OpenAiCompatible" xml:space="preserve"><value>OpenAI 兼容接口</value></data>
+  <data name="Provider_Claude" xml:space="preserve"><value>Claude（Anthropic）</value></data>
+  <data name="ClaudeModelHint" xml:space="preserve"><value>默认是 claude-opus-5-5。也可以换成 claude-sonnet-5-5、claude-haiku-5-5 等其他 Claude 模型。</value></data>
+  <data name="ClaudeKeyMissing" xml:space="preserve"><value>还没有保存 Claude 的 API key。</value></data>
 </root>

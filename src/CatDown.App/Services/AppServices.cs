@@ -16,9 +16,19 @@ public sealed class AppServices
     public required ICredentialStore Credentials { get; init; }
 
     public Func<LlmSettings, string?, ILlmClient> CreateLlmClient { get; init; } =
-        (settings, key) => new OpenAiCompatibleClient(Http, settings.BaseUrl, settings.Model, key);
+        (settings, key) => settings.Provider == LlmProvider.Claude
+            ? ClaudeClient.Create(key ?? "", settings.ClaudeModel)
+            : new OpenAiCompatibleClient(Http, settings.BaseUrl, settings.Model, key);
 
-    // Null when machine translation is not set up.
-    public ILlmClient? LlmClient() =>
-        Settings.Llm.IsConfigured ? CreateLlmClient(Settings.Llm, Credentials.Read(LlmSettings.ApiKeyName)) : null;
+    // Null when machine translation is not set up. Claude always needs a key.
+    public ILlmClient? LlmClient()
+    {
+        var llm = Settings.Llm;
+        if (!llm.IsConfigured)
+            return null;
+        var key = Credentials.Read(llm.KeyName);
+        if (llm.Provider == LlmProvider.Claude && string.IsNullOrEmpty(key))
+            return null;
+        return CreateLlmClient(llm, key);
+    }
 }
