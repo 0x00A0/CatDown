@@ -57,4 +57,30 @@
   <data name="ErrorTitle" xml:space="preserve"><value>Something went wrong</value></data>
   <data name="Progress" xml:space="preserve"><value>{0}%</value></data>
   <data name="SourceMissing" xml:space="preserve"><value>{0} isn't in the project folder anymore. Its translation data is kept in .catdown.</value></data>
+  <data name="Glossary" xml:space="preserve"><value>Glossary</value></data>
+  <data name="GlossarySource" xml:space="preserve"><value>Term</value></data>
+  <data name="GlossaryTarget" xml:space="preserve"><value>Translation</value></data>
+  <data name="GlossaryNote" xml:space="preserve"><value>Note</value></data>
+  <data name="AddTerm" xml:space="preserve"><value>Add term</value></data>
+  <data name="Remove" xml:space="preserve"><value>Remove</value></data>
+  <data name="Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Matches" xml:space="preserve"><value>Translation memory</value></data>
+  <data name="NoMatches" xml:space="preserve"><value>No matches</value></data>
+  <data name="GlossaryHits" xml:space="preserve"><value>Terms</value></data>
+  <data name="NoGlossaryHits" xml:space="preserve"><value>No glossary terms here</value></data>
+  <data name="MachineTranslate" xml:space="preserve"><value>Machine translate</value></data>
+  <data name="MachineTranslating" xml:space="preserve"><value>Translating…</value></data>
+  <data name="MtNotConfigured" xml:space="preserve"><value>Machine translation isn't set up yet. Add the service address and model in Settings.</value></data>
+  <data name="MtFailed" xml:space="preserve"><value>Machine translation failed: {0}</value></data>
+  <data name="OverwriteTitle" xml:space="preserve"><value>Replace translation</value></data>
+  <data name="OverwriteMessage" xml:space="preserve"><value>This sentence already has a translation. Replace it with the machine translation?</value></data>
+  <data name="MtSection" xml:space="preserve"><value>Machine translation</value></data>
+  <data name="MtBaseUrl" xml:space="preserve"><value>Service address (OpenAI compatible)</value></data>
+  <data name="MtModel" xml:space="preserve"><value>Model</value></data>
+  <data name="MtApiKey" xml:space="preserve"><value>API key</value></data>
+  <data name="SaveKey" xml:space="preserve"><value>Save key</value></data>
+  <data name="ClearKey" xml:space="preserve"><value>Remove key</value></data>
+  <data name="KeySaved" xml:space="preserve"><value>The key is saved in the system credential store.</value></data>
+  <data name="KeyMissing" xml:space="preserve"><value>No key saved. Local models may not need one.</value></data>
+  <data name="KeyUnavailable" xml:space="preserve"><value>This system has no credential store, so the key can't be saved.</value></data>
 </root>

@@ -1,4 +1,5 @@
 using CatDown.App.Services;
+using CatDown.Core.Glossary;
 
 namespace CatDown.App.Tests;
 
@@ -28,4 +29,17 @@ public sealed class FakeDialogs : IDialogService
     public Func<string, string?> EditText { get; set; } = text => null;
 
     public Task<string?> EditTextAsync(string title, string text) => Task.FromResult(EditText(text));
+
+    public bool ConfirmAnswer { get; set; } = true;
+    public int Confirmations { get; private set; }
+
+    public Task<bool> ConfirmAsync(string title, string message)
+    {
+        Confirmations++;
+        return Task.FromResult(ConfirmAnswer);
+    }
+
+    public Func<Glossary, Glossary?> EditGlossary { get; set; } = _ => null;
+
+    public Task<Glossary?> EditGlossaryAsync(Glossary glossary) => Task.FromResult(EditGlossary(glossary));
 }

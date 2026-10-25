@@ -1,20 +1,24 @@
+using CatDown.App.Localization;
 using CatDown.App.Services;
 using CatDown.Core.Model;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace CatDown.App.ViewModels;
 
 public partial class SettingsViewModel : ObservableObject
 {
-    readonly AppSettings _settings;
-    readonly Action<AppSettings> _save;
+    readonly AppServices _services;
+    AppSettings Settings => _services.Settings;
 
-    public SettingsViewModel(AppSettings settings, Action<AppSettings> save)
+    public SettingsViewModel(AppServices services)
     {
-        _settings = settings;
-        _save = save;
-        _selectedLanguage = Languages.First(c => c.Value == settings.UiLanguage);
-        _selectedTheme = Themes.First(c => c.Value == settings.Theme);
+        _services = services;
+        _selectedLanguage = Languages.First(c => c.Value == Settings.UiLanguage);
+        _selectedTheme = Themes.First(c => c.Value == Settings.Theme);
+        _baseUrl = Settings.Llm.BaseUrl;
+        _model = Settings.Llm.Model;
+        UpdateKeyStatus();
     }
 
     public IReadOnlyList<Choice<string?>> Languages { get; } =
@@ -37,21 +41,69 @@ public partial class SettingsViewModel : ObservableObject
     [ObservableProperty]
     private Choice<ThemeChoice> _selectedTheme;
 
+    [ObservableProperty]
+    private string _baseUrl;
+
+    [ObservableProperty]
+    private string _model;
+
+    // Typed in by the user; never filled from the store.
+    [ObservableProperty]
+    private string _apiKeyInput = "";
+
+    [ObservableProperty]
+    private string _keyStatus = "";
+
+    public bool CanStoreKeys => _services.Credentials.IsAvailable;
+
     partial void OnSelectedLanguageChanged(Choice<string?> value)
     {
-        _settings.UiLanguage = value.Value;
-        Changed();
+        Settings.UiLanguage = value.Value;
+        Appearance.Apply(Settings);
+        UpdateKeyStatus();
+        Save();
     }
 
     partial void OnSelectedThemeChanged(Choice<ThemeChoice> value)
     {
-        _settings.Theme = value.Value;
-        Changed();
+        Settings.Theme = value.Value;
+        Appearance.Apply(Settings);
+        Save();
     }
 
-    void Changed()
+    partial void OnBaseUrlChanged(string value)
     {
-        Appearance.Apply(_settings);
-        _save(_settings);
+        Settings.Llm.BaseUrl = value.Trim();
+        Save();
     }
+
+    partial void OnModelChanged(string value)
+    {
+        Settings.Llm.Model = value.Trim();
+        Save();
+    }
+
+    [RelayCommand]
+    void SaveKey()
+    {
+        if (!CanStoreKeys || ApiKeyInput.Trim().Length == 0)
+            return;
+        _services.Credentials.Write(LlmSettings.ApiKeyName, ApiKeyInput.Trim());
+        ApiKeyInput = "";
+        UpdateKeyStatus();
+    }
+
+    [RelayCommand]
+    void ClearKey()
+    {
+        _services.Credentials.Delete(LlmSettings.ApiKeyName);
+        UpdateKeyStatus();
+    }
+
+    void UpdateKeyStatus() =>
+        KeyStatus = !CanStoreKeys ? Loc.Get("KeyUnavailable")
+            : _services.Credentials.Read(LlmSettings.ApiKeyName) is { Length: > 0 } ? Loc.Get("KeySaved")
+            : Loc.Get("KeyMissing");
+
+    void Save() => _services.SaveSettings(Settings);
 }

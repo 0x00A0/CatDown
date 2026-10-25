@@ -4,6 +4,7 @@
              xmlns:loc="using:CatDown.App.Localization"
              xmlns:editor="using:CatDown.App.Editor"
              xmlns:preview="using:CatDown.App.Preview"
+             xmlns:controls="using:CatDown.App.Controls"
              x:Class="CatDown.App.Views.SegmentGridView"
              x:DataType="vm:SegmentGridViewModel">
   <UserControl.Styles>
@@ -44,6 +45,7 @@
         <Button x:Name="PreviewButton" DockPanel.Dock="Right" Content="{Binding PreviewButtonText}" Command="{Binding TogglePreviewCommand}" />
         <StackPanel Orientation="Horizontal" Spacing="4" IsEnabled="{Binding !IsPreview}">
           <Button x:Name="ConfirmButton" Theme="{DynamicResource BorderlessButton}" Content="{loc:Str Confirm}" Command="{Binding ConfirmCommand}" />
+          <Button Theme="{DynamicResource BorderlessButton}" Content="{loc:Str MachineTranslate}" Command="{Binding MachineTranslateCommand}" />
           <Button Theme="{DynamicResource BorderlessButton}" Content="{loc:Str CopySource}" Command="{Binding CopySourceCommand}" />
           <Button Theme="{DynamicResource BorderlessButton}" Content="{loc:Str Merge}" Command="{Binding MergeCommand}" />
           <Button Theme="{DynamicResource BorderlessButton}" Content="{loc:Str Split}" Command="{Binding SplitCommand}" />
@@ -62,6 +64,55 @@
           <TextBlock Grid.Column="2" Text="{loc:Str ColumnTarget}" Foreground="{DynamicResource SemiColorText2}" Margin="8,0" />
         </Grid>
 
+        <Border DockPanel.Dock="Bottom" Padding="12,8" MaxHeight="180"
+                BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="0,1,0,0">
+          <Grid ColumnDefinitions="2*,24,*">
+            <DockPanel>
+              <TextBlock DockPanel.Dock="Top" Text="{loc:Str Matches}" Foreground="{DynamicResource SemiColorText2}" Margin="0,0,0,4" />
+              <TextBlock DockPanel.Dock="Top" Text="{loc:Str NoMatches}" Foreground="{DynamicResource SemiColorText3}"
+                         IsVisible="{Binding !Matches.Count}" />
+              <ScrollViewer>
+                <ItemsControl x:Name="MatchList" ItemsSource="{Binding Matches}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="vm:TmMatchViewModel">
+                      <Grid ColumnDefinitions="28,48,*" Margin="0,2">
+                        <TextBlock Text="{Binding Number}" Foreground="{DynamicResource SemiColorText3}" />
+                        <TextBlock Grid.Column="1" Text="{Binding Score}" Foreground="{DynamicResource SemiColorPrimary}" FontWeight="SemiBold" />
+                        <StackPanel Grid.Column="2">
+                          <TextBlock Text="{Binding Target}" TextWrapping="Wrap" />
+                          <TextBlock Text="{Binding Source}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource SemiColorText2}" />
+                        </StackPanel>
+                      </Grid>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </ScrollViewer>
+            </DockPanel>
+            <DockPanel Grid.Column="2">
+              <TextBlock DockPanel.Dock="Top" Text="{loc:Str GlossaryHits}" Foreground="{DynamicResource SemiColorText2}" Margin="0,0,0,4" />
+              <TextBlock DockPanel.Dock="Top" Text="{loc:Str NoGlossaryHits}" Foreground="{DynamicResource SemiColorText3}"
+                         IsVisible="{Binding !Hits.Count}" />
+              <ScrollViewer>
+                <ItemsControl x:Name="HitList" ItemsSource="{Binding Hits}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="vm:GlossaryHitViewModel">
+                      <StackPanel Margin="0,2">
+                        <TextBlock TextWrapping="Wrap">
+                          <Run Text="{Binding Source}" />
+                          <Run Text=" → " Foreground="{DynamicResource SemiColorText3}" />
+                          <Run Text="{Binding Target}" FontWeight="SemiBold" />
+                        </TextBlock>
+                        <TextBlock Text="{Binding Note}" FontSize="12" Foreground="{DynamicResource SemiColorText2}" TextWrapping="Wrap"
+                                   IsVisible="{Binding Note, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                      </StackPanel>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </ScrollViewer>
+            </DockPanel>
+          </Grid>
+        </Border>
+
         <ListBox x:Name="RowList" ItemsSource="{Binding Rows}" SelectedItem="{Binding SelectedRow}">
           <ListBox.ItemTemplate>
             <DataTemplate DataType="vm:SegmentRowViewModel">
@@ -69,7 +120,8 @@
                 <Grid ColumnDefinitions="44,*,*,32">
                   <TextBlock Text="{Binding Number}" Foreground="{DynamicResource SemiColorText3}" Margin="0,2,0,0" />
                   <SelectableTextBlock x:Name="SourceText" Grid.Column="1" Margin="8,2" TextWrapping="Wrap"
-                                       Text="{Binding Source}" Classes.verbatim="{Binding IsVerbatim}"
+                                       controls:Highlight.Parts="{Binding SourceParts}" ToolTip.Tip="{Binding GlossaryTip}"
+                                       Classes.verbatim="{Binding IsVerbatim}"
                                        SelectionStart="{Binding SourceCaret, Mode=OneWayToSource}"
                                        DoubleTapped="OnSourceDoubleTapped" />
                   <Panel Grid.Column="2" Margin="8,0">
@@ -78,9 +130,15 @@
                     <ContentControl Content="{Binding EditTarget}">
                       <ContentControl.ContentTemplate>
                         <DataTemplate DataType="vm:SegmentRowViewModel">
-                          <Border BorderBrush="{DynamicResource SemiColorPrimary}" BorderThickness="1" CornerRadius="4" Padding="4,2">
-                            <editor:MarkdownEditor x:Name="TargetEditor" Markdown="{Binding Target}" FocusOnAttach="True" MinHeight="24" />
-                          </Border>
+                          <StackPanel Spacing="4">
+                            <Border BorderBrush="{DynamicResource SemiColorPrimary}" BorderThickness="1" CornerRadius="4" Padding="4,2">
+                              <editor:MarkdownEditor x:Name="TargetEditor" Markdown="{Binding Target}" FocusOnAttach="True" MinHeight="24" />
+                            </Border>
+                            <Button x:Name="RowMachineTranslate" HorizontalAlignment="Left" Padding="8,2" FontSize="12"
+                                    Theme="{DynamicResource BorderlessButton}" Content="{loc:Str MachineTranslate}"
+                                    IsVisible="{Binding !IsVerbatim}"
+                                    Command="{Binding $parent[ListBox].((vm:SegmentGridViewModel)DataContext).MachineTranslateCommand}" />
+                          </StackPanel>
                         </DataTemplate>
                       </ContentControl.ContentTemplate>
                     </ContentControl>

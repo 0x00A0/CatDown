@@ -5,6 +5,7 @@ using Avalonia.Headless.XUnit;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using CatDown.App.Localization;
+using CatDown.App.Services;
 using CatDown.App.ViewModels;
 using CatDown.App.Views;
 using CatDown.Core.Model;
@@ -32,9 +33,11 @@ public class SettingsTests
     [AvaloniaFact]
     public void SwitchingLanguageUpdatesOpenWindows()
     {
-        var settings = new AppSettings { UiLanguage = "en" };
+        var services = TestServices.Create();
+        var settings = services.Settings;
+        settings.UiLanguage = "en";
         Loc.Instance.SetLanguage("en");
-        var vm = new SettingsViewModel(settings, _ => { });
+        var vm = new SettingsViewModel(services);
         var window = new SettingsWindow { DataContext = vm };
         window.Show();
         var label = window.FindControl<TextBlock>("LanguageLabel")!;
@@ -55,7 +58,14 @@ public class SettingsTests
     public void SwitchingThemeChangesVariantAndSaves()
     {
         AppSettings? saved = null;
-        var vm = new SettingsViewModel(new AppSettings(), s => saved = s);
+        var services = TestServices.Create();
+        var vm = new SettingsViewModel(new AppServices
+        {
+            Settings = services.Settings,
+            SaveSettings = s => saved = s,
+            Memory = services.Memory,
+            Credentials = services.Credentials,
+        });
 
         vm.SelectedTheme = vm.Themes.First(c => c.Value == ThemeChoice.Dark);
         Assert.Equal(ThemeVariant.Dark, Application.Current!.ActualThemeVariant);

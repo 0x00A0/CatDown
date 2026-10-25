@@ -5,7 +5,7 @@
         x:Class="CatDown.App.Views.SettingsWindow"
         x:DataType="vm:SettingsViewModel"
         Title="{loc:Str Settings}"
-        Width="420" SizeToContent="Height"
+        Width="480" SizeToContent="Height"
         WindowStartupLocation="CenterOwner"
         CanResize="False">
   <StackPanel Margin="24" Spacing="16">
@@ -21,6 +21,27 @@
                 ItemsSource="{Binding Themes}" SelectedItem="{Binding SelectedTheme}"
                 DisplayMemberBinding="{Binding Label}" />
     </StackPanel>
+
+    <Border Height="1" Background="{DynamicResource SemiColorBorder}" />
+    <TextBlock Text="{loc:Str MtSection}" FontWeight="SemiBold" />
+    <StackPanel Spacing="6">
+      <TextBlock Text="{loc:Str MtBaseUrl}" />
+      <TextBox x:Name="BaseUrlBox" Text="{Binding BaseUrl}" PlaceholderText="https://api.openai.com/v1" />
+    </StackPanel>
+    <StackPanel Spacing="6">
+      <TextBlock Text="{loc:Str MtModel}" />
+      <TextBox x:Name="ModelBox" Text="{Binding Model}" PlaceholderText="gpt-4o-mini" />
+    </StackPanel>
+    <StackPanel Spacing="6">
+      <TextBlock Text="{loc:Str MtApiKey}" />
+      <Grid ColumnDefinitions="*,8,Auto,8,Auto">
+        <TextBox x:Name="ApiKeyBox" Text="{Binding ApiKeyInput}" PasswordChar="•" IsEnabled="{Binding CanStoreKeys}" />
+        <Button Grid.Column="2" Content="{loc:Str SaveKey}" Command="{Binding SaveKeyCommand}" IsEnabled="{Binding CanStoreKeys}" />
+        <Button Grid.Column="4" Theme="{DynamicResource BorderlessButton}" Content="{loc:Str ClearKey}" Command="{Binding ClearKeyCommand}" IsEnabled="{Binding CanStoreKeys}" />
+      </Grid>
+      <TextBlock x:Name="KeyStatusText" Text="{Binding KeyStatus}" Foreground="{DynamicResource SemiColorText2}" TextWrapping="Wrap" />
+    </StackPanel>
+
     <Button HorizontalAlignment="Right" Content="{loc:Str Close}" Click="OnClose" />
   </StackPanel>
 </Window>

@@ -30,6 +30,24 @@ public sealed class ProjectStore(string root)
 
     public void SaveSettings(ProjectSettings settings) => WriteJson(SettingsPath, settings);
 
+    string GlossaryPath => Path.Combine(DataFolder, "glossary.json");
+
+    public Glossary.Glossary LoadGlossary()
+    {
+        if (!File.Exists(GlossaryPath))
+            return new Glossary.Glossary();
+        try
+        {
+            return CatDownJson.Deserialize<Glossary.Glossary>(File.ReadAllText(GlossaryPath));
+        }
+        catch (JsonException)
+        {
+            return new Glossary.Glossary();
+        }
+    }
+
+    public void SaveGlossary(Glossary.Glossary glossary) => WriteJson(GlossaryPath, glossary);
+
     // Relative paths with '/' separators, sorted.
     public IReadOnlyList<string> ListMarkdownFiles(ProjectSettings? settings)
     {

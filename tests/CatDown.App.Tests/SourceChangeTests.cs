@@ -13,7 +13,7 @@ public class SourceChangeTests
     {
         Loc.Instance.SetLanguage("en");
         var dialogs = new FakeDialogs();
-        var vm = new MainWindowViewModel(dialogs);
+        var vm = new MainWindowViewModel(dialogs, TestServices.Create());
         new MainWindow { DataContext = vm }.Show();
         await vm.OpenProject(project.Path);
         vm.OpenFile("README.md");
