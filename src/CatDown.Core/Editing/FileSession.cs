@@ -112,6 +112,9 @@ public sealed class FileSession
 
     public void Save() => _store.SaveFile(Document);
 
+    // The splitter for the project's current rules (SRX if imported, otherwise built in).
+    public ISentenceSplitter CurrentSplitter() => CreateSplitter(_store, _settings);
+
     public ParsedBlock ParsedBlockOf(Block block) => Parsed.Blocks[Document.Blocks.IndexOf(block)];
 
     public ExportResult Export() => Exporter.Export(Parsed, Document, _settings.TargetLanguage);

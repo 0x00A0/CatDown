@@ -6,6 +6,7 @@ using CatDown.Core.Editing;
 using CatDown.Core.Glossary;
 using CatDown.Core.Llm;
 using CatDown.Core.Model;
+using CatDown.Core.Segmentation;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -215,6 +216,67 @@ public partial class SegmentGridViewModel : ObservableObject
         catch (TaskCanceledException)
         {
             _notify(Loc.Format("MtFailed", "timeout"));
+        }
+        finally
+        {
+            IsTranslating = false;
+        }
+    }
+
+    // Splits blocks again; asks once per translated block unless told to apply the answer to all.
+    public async Task<ResegmentStats> Resegment(IEnumerable<Block> blocks, Func<Block, ParsedBlock, Task<IReadOnlyList<TextSpan>>> split)
+    {
+        SaveNow();
+        var client = _services.LlmClient();
+        TranslatedBlockAction? forAll = null;
+        var resegmenter = new Resegmenter(_project.TargetLanguage, async block =>
+        {
+            if (forAll is { } decided)
+                return decided;
+            var choice = await _dialogs.AskTranslatedBlockAsync(block.Source, client is not null);
+            if (choice.ApplyToAll)
+                forAll = choice.Action;
+            return choice.Action;
+        }, client is null ? null : new LlmRealigner(client));
+
+        var stats = await resegmenter.ResegmentAsync(Session, blocks, split);
+        Rebuild();
+        _saved();
+        _notify(Loc.Format("ResegmentDone", stats.ChangedBlocks, stats.SkippedBlocks));
+        return stats;
+    }
+
+    public Task ResegmentWithRules()
+    {
+        var splitter = Session.CurrentSplitter();
+        return Resegment(Session.Document.Blocks,
+            (block, parsed) => Task.FromResult(splitter.Split(block.Source, parsed.Protected, _project.SourceLanguage)));
+    }
+
+    [RelayCommand]
+    Task LlmSegmentBlock() =>
+        SelectedRow is { IsVerbatim: false } row ? LlmSegment([row.Block]) : Task.CompletedTask;
+
+    [RelayCommand]
+    Task LlmSegmentFile() => LlmSegment(Session.Document.Blocks);
+
+    async Task LlmSegment(IEnumerable<Block> blocks)
+    {
+        if (_services.LlmClient() is not { } client)
+        {
+            _notify(Loc.Get("MtNotConfigured"));
+            return;
+        }
+        var segmenter = new LlmSegmenter(client);
+        IsTranslating = true;
+        try
+        {
+            await Resegment(blocks, (block, parsed) => segmenter.SplitAsync(block.Source, parsed.Protected));
+        }
+        catch (LlmException e)
+        {
+            Rebuild();
+            _notify(Loc.Format("LlmSegmentFailed", e.Message));
         }
         finally
         {

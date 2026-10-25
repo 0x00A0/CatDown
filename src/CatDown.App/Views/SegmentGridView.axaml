@@ -46,15 +46,23 @@
         <Button x:Name="PreviewButton" DockPanel.Dock="Right" Content="{Binding PreviewButtonText}" Command="{Binding TogglePreviewCommand}" />
         <Button x:Name="LayoutButton" DockPanel.Dock="Right" Margin="0,0,8,0" Theme="{DynamicResource BorderlessButton}"
                 Content="{Binding LayoutButtonText}" Command="{Binding ToggleLayoutCommand}" IsEnabled="{Binding !IsPreview}" />
-        <StackPanel Orientation="Horizontal" Spacing="4" IsEnabled="{Binding !IsPreview}">
+        <WrapPanel IsEnabled="{Binding !IsPreview}">
           <Button x:Name="ConfirmButton" Theme="{DynamicResource BorderlessButton}" Content="{loc:Str Confirm}" Command="{Binding ConfirmCommand}" />
           <Button Theme="{DynamicResource BorderlessButton}" Content="{loc:Str MachineTranslate}" Command="{Binding MachineTranslateCommand}" />
           <Button Theme="{DynamicResource BorderlessButton}" Content="{loc:Str CopySource}" Command="{Binding CopySourceCommand}" />
           <Button Theme="{DynamicResource BorderlessButton}" Content="{loc:Str Merge}" Command="{Binding MergeCommand}" />
           <Button Theme="{DynamicResource BorderlessButton}" Content="{loc:Str Split}" Command="{Binding SplitCommand}" />
           <Button Theme="{DynamicResource BorderlessButton}" Content="{loc:Str EditSource}" Command="{Binding EditSourceCommand}" />
+          <DropDownButton Theme="{DynamicResource BorderlessDropDownButton}" Content="{loc:Str LlmSegment}" IsEnabled="{Binding !IsTranslating}">
+            <DropDownButton.Flyout>
+              <MenuFlyout>
+                <MenuItem Header="{loc:Str LlmSegmentBlock}" Command="{Binding LlmSegmentBlockCommand}" />
+                <MenuItem Header="{loc:Str LlmSegmentFile}" Command="{Binding LlmSegmentFileCommand}" />
+              </MenuFlyout>
+            </DropDownButton.Flyout>
+          </DropDownButton>
           <CheckBox Margin="12,0,0,0" VerticalAlignment="Center" Content="{loc:Str OnlyNeedsReview}" IsChecked="{Binding OnlyNeedsReview}" />
-        </StackPanel>
+        </WrapPanel>
       </DockPanel>
     </Border>
 
