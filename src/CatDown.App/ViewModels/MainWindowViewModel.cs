@@ -121,7 +121,8 @@ public partial class MainWindowViewModel(IDialogService dialogs, AppServices ser
         CloseFile();
         var (session, changes) = FileSession.Open(Store, Settings, relativePath);
         Session = session;
-        Editor = new SegmentGridViewModel(session, Dialogs, Settings, Services, _glossary, notice => Notice = notice, UpdateProgress);
+        Editor = new SegmentGridViewModel(session, Dialogs, Settings, Services, _glossary, notice => Notice = notice, UpdateProgress,
+            () => Store.SaveSettings(Settings));
         Notice = session.BrokenBackupPath is { } backup ? Loc.Format("BrokenFile", backup) : ChangeNotice(changes);
         UpdateProgress();
     }

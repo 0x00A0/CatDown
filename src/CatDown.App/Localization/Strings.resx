@@ -83,4 +83,6 @@
   <data name="KeySaved" xml:space="preserve"><value>The key is saved in the system credential store.</value></data>
   <data name="KeyMissing" xml:space="preserve"><value>No key saved. Local models may not need one.</value></data>
   <data name="KeyUnavailable" xml:space="preserve"><value>This system has no credential store, so the key can't be saved.</value></data>
+  <data name="SideBySide" xml:space="preserve"><value>Side by side</value></data>
+  <data name="GridLayout" xml:space="preserve"><value>Segment grid</value></data>
 </root>

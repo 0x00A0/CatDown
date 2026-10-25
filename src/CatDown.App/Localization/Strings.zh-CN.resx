@@ -83,4 +83,6 @@
   <data name="KeySaved" xml:space="preserve"><value>密钥已保存在系统凭据库里。</value></data>
   <data name="KeyMissing" xml:space="preserve"><value>还没有保存密钥。本地模型可以不填。</value></data>
   <data name="KeyUnavailable" xml:space="preserve"><value>这个系统没有可用的凭据库，没法保存密钥。</value></data>
+  <data name="SideBySide" xml:space="preserve"><value>并排对照</value></data>
+  <data name="GridLayout" xml:space="preserve"><value>句段表格</value></data>
 </root>

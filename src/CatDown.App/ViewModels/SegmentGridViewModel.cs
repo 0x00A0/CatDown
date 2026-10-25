@@ -22,11 +22,12 @@ public partial class SegmentGridViewModel : ObservableObject
     readonly AppServices _services;
     readonly Action<string?> _notify;
     readonly Action _saved;
+    readonly Action _saveProject;
     readonly DispatcherTimer _saveTimer;
     Glossary _glossary;
 
     public SegmentGridViewModel(FileSession session, IDialogService dialogs, ProjectSettings project, AppServices services,
-        Glossary glossary, Action<string?> notify, Action saved)
+        Glossary glossary, Action<string?> notify, Action saved, Action saveProject)
     {
         Session = session;
         _dialogs = dialogs;
@@ -35,6 +36,8 @@ public partial class SegmentGridViewModel : ObservableObject
         _glossary = glossary;
         _notify = notify;
         _saved = saved;
+        _saveProject = saveProject;
+        _layout = project.Layout;
         _saveTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
         _saveTimer.Tick += (_, _) => SaveNow();
         Rebuild();
@@ -69,6 +72,23 @@ public partial class SegmentGridViewModel : ObservableObject
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(MachineTranslateCommand))]
     private bool _isTranslating;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsSideBySide), nameof(LayoutButtonText))]
+    private EditorLayout _layout;
+
+    public bool IsSideBySide => Layout == EditorLayout.SideBySide;
+
+    public string LayoutButtonText => Loc.Get(IsSideBySide ? "GridLayout" : "SideBySide");
+
+    partial void OnLayoutChanged(EditorLayout value)
+    {
+        _project.Layout = value;
+        _saveProject();
+    }
+
+    [RelayCommand]
+    void ToggleLayout() => Layout = IsSideBySide ? EditorLayout.Grid : EditorLayout.SideBySide;
 
     public string PreviewButtonText => Loc.Get(IsPreview ? "BackToEditing" : "Preview");
 
