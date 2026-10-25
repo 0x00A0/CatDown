@@ -6,6 +6,8 @@ namespace CatDown.Core.Memory;
 
 public sealed record TmMatch(int Score, string Source, string Target);
 
+public sealed record TmUnit(string SourceLanguage, string TargetLanguage, string Source, string Target);
+
 // The global translation memory: confirmed sentence pairs, searched by similarity.
 public sealed class TranslationMemory : IDisposable
 {
@@ -35,12 +37,40 @@ public sealed class TranslationMemory : IDisposable
 
     public static string DefaultPath(string appDataFolder) => Path.Combine(appDataFolder, "tm.sqlite");
 
-    public void Add(string sourceLanguage, string targetLanguage, string source, string target)
+    public void Add(string sourceLanguage, string targetLanguage, string source, string target) =>
+        AddMany([new TmUnit(sourceLanguage, targetLanguage, source, target)]);
+
+    // Adds many pairs in one transaction; returns how many were usable.
+    public int AddMany(IEnumerable<TmUnit> units)
     {
+        using var transaction = _connection.BeginTransaction();
+        var added = 0;
+        foreach (var unit in units)
+        {
+            if (Insert(unit, transaction))
+                added++;
+        }
+        transaction.Commit();
+        return added;
+    }
+
+    public IEnumerable<TmUnit> All()
+    {
+        using var command = _connection.CreateCommand();
+        command.CommandText = "SELECT source_lang, target_lang, source, target FROM units ORDER BY id;";
+        using var reader = command.ExecuteReader();
+        while (reader.Read())
+            yield return new TmUnit(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3));
+    }
+
+    bool Insert(TmUnit unit, SqliteTransaction transaction)
+    {
+        var (sourceLanguage, targetLanguage, source, target) = unit;
         if (string.IsNullOrWhiteSpace(source) || string.IsNullOrWhiteSpace(target))
-            return;
+            return false;
         var normalized = Normalize(source);
         using var command = _connection.CreateCommand();
+        command.Transaction = transaction;
         command.CommandText = """
             INSERT INTO units (source_lang, target_lang, source, target, normalized, len, updated)
             VALUES ($sl, $tl, $source, $target, $normalized, $len, $updated)
@@ -54,6 +84,7 @@ public sealed class TranslationMemory : IDisposable
         command.Parameters.AddWithValue("$len", normalized.Length);
         command.Parameters.AddWithValue("$updated", DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture));
         command.ExecuteNonQuery();
+        return true;
     }
 
     // Best matches first. Exact matches (after normalizing whitespace and case) score 100.
