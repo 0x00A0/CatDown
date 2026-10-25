@@ -103,6 +103,24 @@ public class LlmClientTests
         Assert.Throws<InvalidOperationException>(() => store.Write("x", "y"));
     }
 
+    [Theory]
+    [InlineData("sk-测试-123")]
+    [InlineData("plain-ascii")]
+    [InlineData("")]
+    public void MacEncodingKeepsSecretsExact(string secret)
+    {
+        var stored = MacCredentialStore.Encode(secret);
+        Assert.All(stored, c => Assert.True(c < 128));
+        Assert.Equal(secret, MacCredentialStore.Decode(stored));
+    }
+
+    [Fact]
+    public void MacDecodingLeavesForeignValuesAlone()
+    {
+        Assert.Equal("set-by-hand", MacCredentialStore.Decode("set-by-hand"));
+        Assert.Equal("b64:not base64!", MacCredentialStore.Decode("b64:not base64!"));
+    }
+
     // Writes to the real credential store, so it only runs when asked for.
     [Fact]
     public void PlatformStoreRoundTrip()

@@ -120,19 +120,40 @@ public sealed class WindowsCredentialStore : ICredentialStore
 }
 
 // macOS keychain through the `security` command, service "CatDown", account <name>.
+// `security -w` prints a password with non-ASCII characters as hex, so secrets are stored
+// as "b64:" + Base64 to keep them ASCII and readable back exactly.
 public sealed class MacCredentialStore : ICredentialStore
 {
+    const string Base64Prefix = "b64:";
+
     public bool IsAvailable => OperatingSystem.IsMacOS();
 
     public string? Read(string name)
     {
         var (code, output) = Run("find-generic-password", "-s", CredentialStores.Service, "-a", name, "-w");
-        return code == 0 ? output.TrimEnd('\n') : null;
+        return code == 0 ? Decode(output.TrimEnd('\n')) : null;
+    }
+
+    public static string Encode(string secret) => Base64Prefix + Convert.ToBase64String(Encoding.UTF8.GetBytes(secret));
+
+    // Values stored some other way (no prefix) come back as they are.
+    public static string Decode(string stored)
+    {
+        if (!stored.StartsWith(Base64Prefix, StringComparison.Ordinal))
+            return stored;
+        try
+        {
+            return Encoding.UTF8.GetString(Convert.FromBase64String(stored[Base64Prefix.Length..]));
+        }
+        catch (FormatException)
+        {
+            return stored;
+        }
     }
 
     public void Write(string name, string secret)
     {
-        var (code, _) = Run("add-generic-password", "-U", "-s", CredentialStores.Service, "-a", name, "-w", secret);
+        var (code, _) = Run("add-generic-password", "-U", "-s", CredentialStores.Service, "-a", name, "-w", Encode(secret));
         if (code != 0)
             throw new InvalidOperationException($"security add-generic-password failed with exit code {code}.");
     }
