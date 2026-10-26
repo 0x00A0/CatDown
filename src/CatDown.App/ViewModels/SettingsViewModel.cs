@@ -20,8 +20,10 @@ public partial class SettingsViewModel : ObservableObject
         _tmCount = Loc.Format("TmCount", services.Memory.Count());
         _selectedLanguage = Languages.First(c => c.Value == Settings.UiLanguage);
         _selectedTheme = Themes.First(c => c.Value == Settings.Theme);
+        _selectedProvider = Providers.First(c => c.Value == Settings.Llm.Provider);
         _baseUrl = Settings.Llm.BaseUrl;
         _model = Settings.Llm.Model;
+        _claudeModel = Settings.Llm.ClaudeModel;
         UpdateKeyStatus();
     }
 
@@ -38,6 +40,24 @@ public partial class SettingsViewModel : ObservableObject
         new(ThemeChoice.Light, "ThemeLight"),
         new(ThemeChoice.Dark, "ThemeDark"),
     ];
+
+    public IReadOnlyList<Choice<LlmProvider>> Providers { get; } =
+    [
+        new(LlmProvider.OpenAiCompatible, "Provider_OpenAiCompatible"),
+        new(LlmProvider.Claude, "Provider_Claude"),
+    ];
+
+    public IReadOnlyList<string> ClaudeModels { get; } = ["claude-opus-5-5", "claude-sonnet-5-5", "claude-haiku-5-5", "claude-fable-5-1"];
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsClaude), nameof(IsOpenAiCompatible))]
+    private Choice<LlmProvider> _selectedProvider;
+
+    public bool IsClaude => SelectedProvider.Value == LlmProvider.Claude;
+    public bool IsOpenAiCompatible => !IsClaude;
+
+    [ObservableProperty]
+    private string _claudeModel;
 
     [ObservableProperty]
     private Choice<string?> _selectedLanguage;
@@ -127,12 +147,26 @@ public partial class SettingsViewModel : ObservableObject
         Save();
     }
 
+    partial void OnSelectedProviderChanged(Choice<LlmProvider> value)
+    {
+        Settings.Llm.Provider = value.Value;
+        ApiKeyInput = "";
+        UpdateKeyStatus();
+        Save();
+    }
+
+    partial void OnClaudeModelChanged(string value)
+    {
+        Settings.Llm.ClaudeModel = value.Trim();
+        Save();
+    }
+
     [RelayCommand]
     void SaveKey()
     {
         if (!CanStoreKeys || ApiKeyInput.Trim().Length == 0)
             return;
-        _services.Credentials.Write(LlmSettings.ApiKeyName, ApiKeyInput.Trim());
+        _services.Credentials.Write(Settings.Llm.KeyName, ApiKeyInput.Trim());
         ApiKeyInput = "";
         UpdateKeyStatus();
     }
@@ -140,14 +174,14 @@ public partial class SettingsViewModel : ObservableObject
     [RelayCommand]
     void ClearKey()
     {
-        _services.Credentials.Delete(LlmSettings.ApiKeyName);
+        _services.Credentials.Delete(Settings.Llm.KeyName);
         UpdateKeyStatus();
     }
 
     void UpdateKeyStatus() =>
         KeyStatus = !CanStoreKeys ? Loc.Get("KeyUnavailable")
-            : _services.Credentials.Read(LlmSettings.ApiKeyName) is { Length: > 0 } ? Loc.Get("KeySaved")
-            : Loc.Get("KeyMissing");
+            : _services.Credentials.Read(Settings.Llm.KeyName) is { Length: > 0 } ? Loc.Get("KeySaved")
+            : Loc.Get(IsClaude ? "ClaudeKeyMissing" : "KeyMissing");
 
     void Save() => _services.SaveSettings(Settings);
 }
