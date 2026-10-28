@@ -39,7 +39,7 @@
   <data name="Status_NeedsReview" xml:space="preserve"><value>Needs review</value></data>
   <data name="SourceChanged" xml:space="preserve"><value>The source changed: {0} to review, {1} new, {2} removed.</value></data>
   <data name="BrokenFile" xml:space="preserve"><value>This file's translation data was damaged. It was backed up to {0} and the file was segmented again.</value></data>
-  <data name="Merge" xml:space="preserve"><value>Merge with next</value></data>
+  <data name="Merge" xml:space="preserve"><value>Merge sentences</value></data>
   <data name="Split" xml:space="preserve"><value>Split at source cursor</value></data>
   <data name="CopySource" xml:space="preserve"><value>Copy source</value></data>
   <data name="Confirm" xml:space="preserve"><value>Confirm</value></data>
@@ -73,7 +73,7 @@
   <data name="MtNotConfigured" xml:space="preserve"><value>Machine translation isn't set up yet. In Settings, choose a service and add the model and any API key it needs.</value></data>
   <data name="MtFailed" xml:space="preserve"><value>Machine translation failed: {0}</value></data>
   <data name="OverwriteTitle" xml:space="preserve"><value>Replace translation</value></data>
-  <data name="OverwriteMessage" xml:space="preserve"><value>This sentence already has a translation. Replace it with the machine translation?</value></data>
+  <data name="OverwriteMessage" xml:space="preserve"><value>Some selected sentences already have a translation. Replace them with the machine translation?</value></data>
   <data name="MtSection" xml:space="preserve"><value>Machine translation</value></data>
   <data name="MtBaseUrl" xml:space="preserve"><value>Service address (OpenAI compatible)</value></data>
   <data name="MtModel" xml:space="preserve"><value>Model</value></data>
@@ -119,4 +119,18 @@
   <data name="Provider_Claude" xml:space="preserve"><value>Claude (Anthropic)</value></data>
   <data name="ClaudeModelHint" xml:space="preserve"><value>Defaults to claude-opus-5-5. Other Claude models such as claude-sonnet-5-5 and claude-haiku-5-5 work too.</value></data>
   <data name="ClaudeKeyMissing" xml:space="preserve"><value>No Claude API key saved yet.</value></data>
+  <data name="NewFile" xml:space="preserve"><value>New file</value></data>
+  <data name="NewFilePrompt" xml:space="preserve"><value>File name, optionally with folders, such as guide/intro.md.</value></data>
+  <data name="NewFileContent" xml:space="preserve"><value>Source text of the new file</value></data>
+  <data name="NewFileInvalid" xml:space="preserve"><value>The file name can't be empty, outside the project folder, or inside .catdown.</value></data>
+  <data name="NewFileExists" xml:space="preserve"><value>{0} already exists.</value></data>
+  <data name="EditWholeSource" xml:space="preserve"><value>Edit whole source</value></data>
+  <data name="ClearTargets" xml:space="preserve"><value>Clear translation</value></data>
+  <data name="MachineTranslateAll" xml:space="preserve"><value>Translate whole file</value></data>
+  <data name="MtAllConfirm" xml:space="preserve"><value>This translates all {0} sentences of the file again and replaces existing translations. Continue?</value></data>
+  <data name="MtProgress" xml:space="preserve"><value>Translating {0} of {1}…</value></data>
+  <data name="MtDone" xml:space="preserve"><value>Machine translation done: {0} sentences.</value></data>
+  <data name="MtStopped" xml:space="preserve"><value>Machine translation stopped after {0} of {1} sentences.</value></data>
+  <data name="Stop" xml:space="preserve"><value>Stop</value></data>
+  <data name="MergeNotContiguous" xml:space="preserve"><value>Only neighbouring sentences in one paragraph can be merged.</value></data>
 </root>

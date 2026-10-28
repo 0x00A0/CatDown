@@ -53,6 +53,11 @@ public partial class SegmentGridViewModel : ObservableObject
     [ObservableProperty]
     private SegmentRowViewModel? _selectedRow;
 
+    // Every selected row (Ctrl/Shift-click in the grid). SelectedRow is the one being edited.
+    public ObservableCollection<SegmentRowViewModel> SelectedRows { get; } = [];
+
+    CancellationTokenSource? _translation;
+
     [ObservableProperty]
     private bool _onlyNeedsReview;
 
@@ -71,7 +76,7 @@ public partial class SegmentGridViewModel : ObservableObject
     private IReadOnlyList<GlossaryHitViewModel> _hits = [];
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(MachineTranslateCommand))]
+    [NotifyCanExecuteChangedFor(nameof(MachineTranslateCommand), nameof(MachineTranslateAllCommand), nameof(StopTranslatingCommand))]
     private bool _isTranslating;
 
     [ObservableProperty]
@@ -153,16 +158,34 @@ public partial class SegmentGridViewModel : ObservableObject
             .ToList();
     }
 
+    // The rows a command acts on: all selected rows in document order, or just the edited one.
+    public IReadOnlyList<SegmentRowViewModel> TargetRows() =>
+        SelectedRows.Distinct().Count() > 1 ? SelectedRows.Distinct().OrderBy(Rows.IndexOf).ToList()
+        : SelectedRow is { } row ? [row]
+        : [];
+
     [RelayCommand]
     void Confirm()
     {
-        if (SelectedRow is not { } row || row.Target.Length == 0)
+        var rows = TargetRows().Where(r => r.Target.Length > 0).ToList();
+        if (rows.Count == 0)
             return;
-        row.Confirm();
-        if (!row.IsVerbatim)
-            _services.Memory.Add(_project.SourceLanguage, _project.TargetLanguage, row.Source, row.Target);
-        var index = Rows.IndexOf(row);
-        SelectedRow = Rows.Skip(index + 1).FirstOrDefault(r => !r.IsConfirmed) ?? SelectedRow;
+        foreach (var row in rows)
+        {
+            row.Confirm();
+            if (!row.IsVerbatim)
+                _services.Memory.Add(_project.SourceLanguage, _project.TargetLanguage, row.Source, row.Target);
+        }
+        var index = Rows.IndexOf(rows[^1]);
+        SelectedRows.Clear();
+        SelectedRow = Rows.Skip(index + 1).FirstOrDefault(r => !r.IsConfirmed) ?? rows[^1];
+    }
+
+    [RelayCommand]
+    void ClearTargets()
+    {
+        foreach (var row in TargetRows())
+            row.Target = "";
     }
 
     [RelayCommand]
@@ -181,37 +204,80 @@ public partial class SegmentGridViewModel : ObservableObject
 
     bool CanMachineTranslate() => !IsTranslating;
 
+    // Translates the selected rows (or the edited one). Asks before replacing existing translations.
     [RelayCommand(CanExecute = nameof(CanMachineTranslate))]
     async Task MachineTranslate()
     {
-        if (SelectedRow is not { IsVerbatim: false } row)
+        var rows = TargetRows().Where(r => !r.IsVerbatim).ToList();
+        if (rows.Count == 0)
             return;
-        var client = _services.LlmClient();
-        if (client is null)
+        if (_services.LlmClient() is null)
         {
             _notify(Loc.Get("MtNotConfigured"));
             return;
         }
-        if (row.Target.Length > 0 && !await _dialogs.ConfirmAsync(Loc.Get("OverwriteTitle"), Loc.Get("OverwriteMessage")))
+        if (rows.Any(r => r.Target.Length > 0) && !await _dialogs.ConfirmAsync(Loc.Get("OverwriteTitle"), Loc.Get("OverwriteMessage")))
             return;
+        await TranslateRows(rows);
+    }
 
-        var request = new TranslationRequest(
-            _project.SourceLanguage,
-            _project.TargetLanguage,
-            row.Source,
-            row.Block.Source,
-            row.Block.Segments.Where(s => s != row.Segment && s.HasTranslation && s.Target.Length > 0).Select(s => (s.Source, s.Target)).ToList(),
-            row.GlossaryHits.Select(h => h.Entry).Distinct().ToList());
+    // Translates every sentence of the file again, replacing what is there.
+    [RelayCommand(CanExecute = nameof(CanMachineTranslate))]
+    async Task MachineTranslateAll()
+    {
+        if (_services.LlmClient() is null)
+        {
+            _notify(Loc.Get("MtNotConfigured"));
+            return;
+        }
+        OnlyNeedsReview = false;
+        var rows = Rows.Where(r => !r.IsVerbatim).ToList();
+        if (rows.Count == 0)
+            return;
+        if (!await _dialogs.ConfirmAsync(Loc.Get("MachineTranslateAll"), Loc.Format("MtAllConfirm", rows.Count)))
+            return;
+        await TranslateRows(rows);
+    }
 
+    bool CanStopTranslating() => IsTranslating;
+
+    [RelayCommand(CanExecute = nameof(CanStopTranslating))]
+    void StopTranslating() => _translation?.Cancel();
+
+    // One request per sentence, in order, so later sentences see the earlier translations of their paragraph.
+    async Task TranslateRows(IReadOnlyList<SegmentRowViewModel> rows)
+    {
+        var client = _services.LlmClient()!;
+        _translation = new CancellationTokenSource();
         IsTranslating = true;
+        var done = 0;
         try
         {
-            var reply = await client.CompleteAsync(TranslationPrompt.Build(request));
-            row.Target = TranslationPrompt.CleanReply(reply, row.Source);
+            foreach (var row in rows)
+            {
+                if (rows.Count > 1)
+                    _notify(Loc.Format("MtProgress", done + 1, rows.Count));
+                var request = new TranslationRequest(
+                    _project.SourceLanguage,
+                    _project.TargetLanguage,
+                    row.Source,
+                    row.Block.Source,
+                    row.Block.Segments.Where(s => s != row.Segment && s.HasTranslation && s.Target.Length > 0).Select(s => (s.Source, s.Target)).ToList(),
+                    row.GlossaryHits.Select(h => h.Entry).Distinct().ToList());
+                var reply = await client.CompleteAsync(TranslationPrompt.Build(request), _translation.Token);
+                row.Target = TranslationPrompt.CleanReply(reply, row.Source);
+                done++;
+            }
+            if (rows.Count > 1)
+                _notify(Loc.Format("MtDone", done));
         }
         catch (LlmException e)
         {
             _notify(Loc.Format("MtFailed", e.Message));
+        }
+        catch (OperationCanceledException) when (_translation.IsCancellationRequested)
+        {
+            _notify(Loc.Format("MtStopped", done, rows.Count));
         }
         catch (TaskCanceledException)
         {
@@ -220,6 +286,9 @@ public partial class SegmentGridViewModel : ObservableObject
         finally
         {
             IsTranslating = false;
+            _translation.Dispose();
+            _translation = null;
+            SaveNow();
         }
     }
 
@@ -294,10 +363,30 @@ public partial class SegmentGridViewModel : ObservableObject
     [RelayCommand]
     void Merge()
     {
-        if (SelectedRow is not { } row)
+        var rows = TargetRows();
+        if (rows.Count == 0)
             return;
-        var result = SegmentOperations.Merge(Session.Document, row.Segment.Id, _project.TargetLanguage);
-        AfterEdit(result);
+        if (rows.Count == 1)
+        {
+            AfterEdit(SegmentOperations.Merge(Session.Document, rows[0].Segment.Id, _project.TargetLanguage));
+            return;
+        }
+
+        // Several selected sentences merge into the first; they must be neighbours in one block.
+        var block = rows[0].Block;
+        var indexes = rows.Select(r => block.Segments.IndexOf(r.Segment)).ToList();
+        if (rows.Any(r => r.Block != block) || indexes.Zip(indexes.Skip(1)).Any(p => p.Second != p.First + 1))
+        {
+            _notify(Loc.Get("MergeNotContiguous"));
+            return;
+        }
+        for (var i = 1; i < rows.Count; i++)
+            SegmentOperations.Merge(Session.Document, rows[0].Segment.Id, _project.TargetLanguage);
+        SelectedRows.Clear();
+        SelectedRow = null;
+        Rebuild();
+        SelectedRow = Rows.FirstOrDefault(r => r.Segment == rows[0].Segment);
+        SaveNow();
     }
 
     [RelayCommand]
@@ -338,6 +427,21 @@ public partial class SegmentGridViewModel : ObservableObject
         var text = await _dialogs.EditTextAsync(Loc.Get("EditSource"), row.Block.Source);
         if (text is not null && text != row.Block.Source)
             EditSource(row.Block, text);
+    }
+
+    // Edits the whole source file at once, e.g. to write the first text of a new file.
+    [RelayCommand]
+    async Task EditWholeSource()
+    {
+        var text = await _dialogs.EditTextAsync(Loc.Get("EditWholeSource"), Session.Source.Text);
+        if (text is null || text == Session.Source.Text)
+            return;
+        SaveNow();
+        var stats = Session.ReplaceSource(text);
+        Rebuild();
+        SelectedRow ??= Rows.FirstOrDefault(r => !r.IsConfirmed) ?? Rows.FirstOrDefault();
+        _notify(MainWindowViewModel.ChangeNotice(stats));
+        _saved();
     }
 
     // Replaces a block's source text and writes it to the source file.

@@ -92,6 +92,14 @@ public sealed class FileSession
         return Realign();
     }
 
+    // Replaces the whole source file.
+    public AlignmentStats ReplaceSource(string text)
+    {
+        Source = Source with { Text = text };
+        _store.WriteSource(RelativePath, Source);
+        return Realign();
+    }
+
     // Writes an edit of one block back to the source file.
     public AlignmentStats EditSourceBlock(int blockIndex, string newText)
     {

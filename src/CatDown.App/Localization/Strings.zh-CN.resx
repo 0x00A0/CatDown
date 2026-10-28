@@ -39,7 +39,7 @@
   <data name="Status_NeedsReview" xml:space="preserve"><value>需复核</value></data>
   <data name="SourceChanged" xml:space="preserve"><value>原文有变化：{0} 句需复核，{1} 句新增，{2} 句删除。</value></data>
   <data name="BrokenFile" xml:space="preserve"><value>这个文件的翻译数据坏了，已备份到 {0}，并重新切分。</value></data>
-  <data name="Merge" xml:space="preserve"><value>合并下一句</value></data>
+  <data name="Merge" xml:space="preserve"><value>合并句段</value></data>
   <data name="Split" xml:space="preserve"><value>在原文光标处拆分</value></data>
   <data name="CopySource" xml:space="preserve"><value>复制原文</value></data>
   <data name="Confirm" xml:space="preserve"><value>确认</value></data>
@@ -73,7 +73,7 @@
   <data name="MtNotConfigured" xml:space="preserve"><value>机翻还没设置：去设置里选好服务，填上模型和需要的 API key。</value></data>
   <data name="MtFailed" xml:space="preserve"><value>机翻失败：{0}</value></data>
   <data name="OverwriteTitle" xml:space="preserve"><value>覆盖译文</value></data>
-  <data name="OverwriteMessage" xml:space="preserve"><value>这一句已经有译文了，用机翻结果覆盖吗？</value></data>
+  <data name="OverwriteMessage" xml:space="preserve"><value>选中的句段里已经有译文了，用机翻结果覆盖吗？</value></data>
   <data name="MtSection" xml:space="preserve"><value>机翻</value></data>
   <data name="MtBaseUrl" xml:space="preserve"><value>服务地址（OpenAI 兼容接口）</value></data>
   <data name="MtModel" xml:space="preserve"><value>模型</value></data>
@@ -119,4 +119,18 @@
   <data name="Provider_Claude" xml:space="preserve"><value>Claude（Anthropic）</value></data>
   <data name="ClaudeModelHint" xml:space="preserve"><value>默认是 claude-opus-5-5。也可以换成 claude-sonnet-5-5、claude-haiku-5-5 等其他 Claude 模型。</value></data>
   <data name="ClaudeKeyMissing" xml:space="preserve"><value>还没有保存 Claude 的 API key。</value></data>
+  <data name="NewFile" xml:space="preserve"><value>新建文件</value></data>
+  <data name="NewFilePrompt" xml:space="preserve"><value>文件名，可以带子文件夹，比如 guide/intro.md。</value></data>
+  <data name="NewFileContent" xml:space="preserve"><value>新文件的原文</value></data>
+  <data name="NewFileInvalid" xml:space="preserve"><value>文件名不能为空，也不能放在项目文件夹外面或 .catdown 里。</value></data>
+  <data name="NewFileExists" xml:space="preserve"><value>{0} 已经存在。</value></data>
+  <data name="EditWholeSource" xml:space="preserve"><value>编辑整篇原文</value></data>
+  <data name="ClearTargets" xml:space="preserve"><value>清空译文</value></data>
+  <data name="MachineTranslateAll" xml:space="preserve"><value>机翻全文</value></data>
+  <data name="MtAllConfirm" xml:space="preserve"><value>机翻全文会重翻这个文件的 {0} 句，并覆盖已有的译文。继续吗？</value></data>
+  <data name="MtProgress" xml:space="preserve"><value>正在机翻 {0}/{1}…</value></data>
+  <data name="MtDone" xml:space="preserve"><value>机翻完成：{0} 句。</value></data>
+  <data name="MtStopped" xml:space="preserve"><value>机翻已停止：完成了 {0}/{1} 句。</value></data>
+  <data name="Stop" xml:space="preserve"><value>停止</value></data>
+  <data name="MergeNotContiguous" xml:space="preserve"><value>只能合并同一段里相邻的几句。</value></data>
 </root>

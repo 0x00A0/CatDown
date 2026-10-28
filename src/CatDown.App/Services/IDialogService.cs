@@ -22,6 +22,9 @@ public interface IDialogService
     Task<bool> ConfirmAsync(string title, string message);
     Task ShowSettingsAsync();
 
+    // A one-line answer such as a file name; null when cancelled.
+    Task<string?> AskTextAsync(string title, string prompt, string initial);
+
     // Lets the user edit a piece of Markdown; null when cancelled.
     Task<string?> EditTextAsync(string title, string text);
 
