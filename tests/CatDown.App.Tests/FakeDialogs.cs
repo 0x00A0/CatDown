@@ -29,6 +29,10 @@ public sealed class FakeDialogs : IDialogService
 
     public Func<string, string?> EditText { get; set; } = text => null;
 
+    public Func<string, string?> AskText { get; set; } = initial => null;
+
+    public Task<string?> AskTextAsync(string title, string prompt, string initial) => Task.FromResult(AskText(initial));
+
     public Task<string?> EditTextAsync(string title, string text) => Task.FromResult(EditText(text));
 
     public bool ConfirmAnswer { get; set; } = true;

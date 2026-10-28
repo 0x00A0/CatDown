@@ -66,6 +66,46 @@ public partial class MainWindowViewModel(IDialogService dialogs, AppServices ser
     [RelayCommand]
     void DismissNotice() => Notice = null;
 
+    // Creates a Markdown file in the project, next to the open file by default, and opens it.
+    [RelayCommand]
+    async Task NewFile()
+    {
+        if (Store is null || Settings is null)
+            return;
+        var folder = Session is { } open && open.RelativePath.LastIndexOf('/') is var slash and > 0 ? open.RelativePath[..(slash + 1)] : "";
+        var name = await Dialogs.AskTextAsync(Loc.Get("NewFile"), Loc.Get("NewFilePrompt"), folder + "untitled.md");
+        if (name is null)
+            return;
+
+        name = name.Trim().Replace('\\', '/');
+        if (!name.EndsWith(".md", StringComparison.OrdinalIgnoreCase) && !name.EndsWith(".markdown", StringComparison.OrdinalIgnoreCase))
+            name += ".md";
+        var full = Store.ToFull(name);
+        var relative = Store.ToRelative(full);
+        if (Path.GetFileNameWithoutExtension(full).Length == 0 || relative.StartsWith("..", StringComparison.Ordinal)
+            || relative.StartsWith(ProjectStore.DataFolderName + "/", StringComparison.OrdinalIgnoreCase))
+        {
+            await Dialogs.ShowMessageAsync(Loc.Get("NewFile"), Loc.Get("NewFileInvalid"));
+            return;
+        }
+        if (File.Exists(full))
+        {
+            await Dialogs.ShowMessageAsync(Loc.Get("NewFile"), Loc.Format("NewFileExists", relative));
+            return;
+        }
+
+        var content = await Dialogs.EditTextAsync(Loc.Get("NewFileContent"), "");
+        if (content is null)
+            return;
+        ProjectStore.WriteText(full, new SourceText(content, HasBom: false));
+        ReloadFiles();
+        var node = Files.SelectMany(f => f.Flatten().Prepend(f)).FirstOrDefault(n => n.RelativePath == relative);
+        if (node is not null)
+            SelectedNode = node;
+        else
+            OpenFile(relative);
+    }
+
     [RelayCommand]
     async Task ImportSrx()
     {

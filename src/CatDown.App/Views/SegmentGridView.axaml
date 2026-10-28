@@ -49,10 +49,14 @@
         <WrapPanel IsEnabled="{Binding !IsPreview}">
           <Button x:Name="ConfirmButton" Theme="{DynamicResource BorderlessButton}" Content="{loc:Str Confirm}" Command="{Binding ConfirmCommand}" />
           <Button Theme="{DynamicResource BorderlessButton}" Content="{loc:Str MachineTranslate}" Command="{Binding MachineTranslateCommand}" />
+          <Button x:Name="TranslateAllButton" Theme="{DynamicResource BorderlessButton}" Content="{loc:Str MachineTranslateAll}" Command="{Binding MachineTranslateAllCommand}" />
+          <Button x:Name="StopButton" Theme="{DynamicResource BorderlessButton}" Content="{loc:Str Stop}" Command="{Binding StopTranslatingCommand}" IsVisible="{Binding IsTranslating}" />
           <Button Theme="{DynamicResource BorderlessButton}" Content="{loc:Str CopySource}" Command="{Binding CopySourceCommand}" />
           <Button Theme="{DynamicResource BorderlessButton}" Content="{loc:Str Merge}" Command="{Binding MergeCommand}" />
           <Button Theme="{DynamicResource BorderlessButton}" Content="{loc:Str Split}" Command="{Binding SplitCommand}" />
+          <Button Theme="{DynamicResource BorderlessButton}" Content="{loc:Str ClearTargets}" Command="{Binding ClearTargetsCommand}" />
           <Button Theme="{DynamicResource BorderlessButton}" Content="{loc:Str EditSource}" Command="{Binding EditSourceCommand}" />
+          <Button Theme="{DynamicResource BorderlessButton}" Content="{loc:Str EditWholeSource}" Command="{Binding EditWholeSourceCommand}" />
           <DropDownButton Theme="{DynamicResource BorderlessDropDownButton}" Content="{loc:Str LlmSegment}" IsEnabled="{Binding !IsTranslating}">
             <DropDownButton.Flyout>
               <MenuFlyout>
@@ -125,7 +129,8 @@
         </Border>
 
         <views:SideBySideView x:Name="SideBySide" IsVisible="{Binding IsSideBySide}" />
-        <ListBox x:Name="RowList" ItemsSource="{Binding Rows}" SelectedItem="{Binding SelectedRow}" IsVisible="{Binding !IsSideBySide}">
+        <ListBox x:Name="RowList" ItemsSource="{Binding Rows}" SelectedItem="{Binding SelectedRow}"
+                 SelectionMode="Multiple" SelectedItems="{Binding SelectedRows}" IsVisible="{Binding !IsSideBySide}">
           <ListBox.ItemTemplate>
             <DataTemplate DataType="vm:SegmentRowViewModel">
               <Border Classes="row" Classes.blockStart="{Binding IsBlockStart}">

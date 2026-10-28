@@ -58,6 +58,9 @@ public partial class SegmentGridView : UserControl
 
     void OnRowPressed(object? sender, PointerPressedEventArgs e)
     {
+        // Ctrl/Cmd- and Shift-clicks extend the selection; let the list handle those.
+        if (e.KeyModifiers.HasFlag(KeyModifiers.Shift) || Shortcuts.IsCommand(e.KeyModifiers))
+            return;
         if (Vm is { } vm && e.Source is Control source
             && source.FindAncestorOfType<ListBoxItem>(includeSelf: true)?.DataContext is SegmentRowViewModel row)
         {

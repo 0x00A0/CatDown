@@ -37,6 +37,8 @@
         </StackPanel>
         <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
           <Button x:Name="OpenFolderButton" Content="{loc:Str OpenFolder}" Command="{Binding OpenFolderCommand}" />
+          <Button x:Name="NewFileButton" Theme="{DynamicResource BorderlessButton}" Content="{loc:Str NewFile}"
+                  Command="{Binding NewFileCommand}" IsEnabled="{Binding HasProject}" />
           <TextBlock x:Name="LanguagePair" VerticalAlignment="Center" Text="{Binding LanguagePairText}"
                      Foreground="{DynamicResource SemiColorText2}" />
         </StackPanel>

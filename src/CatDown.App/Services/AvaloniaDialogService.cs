@@ -47,6 +47,9 @@ public sealed class AvaloniaDialogService(Window owner, AppServices services) : 
     public Task<bool> ConfirmAsync(string title, string message) =>
         new MessageWindow(title, message, askToConfirm: true).ShowDialog<bool>(owner);
 
+    public Task<string?> AskTextAsync(string title, string prompt, string initial) =>
+        new TextInputWindow(title, prompt, initial).ShowDialog<string?>(owner);
+
     public Task<string?> EditTextAsync(string title, string text) =>
         new EditTextWindow(title, text).ShowDialog<string?>(owner);
 
